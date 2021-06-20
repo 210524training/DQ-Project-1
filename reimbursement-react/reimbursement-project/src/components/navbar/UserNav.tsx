@@ -6,7 +6,7 @@ import { Nav, NavbarContainer, NavLogo, MobileIcon, NavMenu, NavItem, NavLinks, 
 //     toggle: () => void
 // }
 
-const Navbar = () => {
+const UserNav = () => {
     return (
         <>
             <Nav>
@@ -20,14 +20,11 @@ const Navbar = () => {
                             <NavLinks to="/about">About</NavLinks>
                         </NavItem>
                         <NavItem>
-                            <NavLinks to="reimbursements">Services</NavLinks>
-                        </NavItem>
-                        <NavItem>
-                            <NavLinks to="/register">Register</NavLinks>
+                            <NavLinks to="/services">Services</NavLinks>
                         </NavItem>
                     </NavMenu>
                     <NavBtn>
-                       <NavBtnLink to="/login">Log in</NavBtnLink> 
+                       <NavBtnLink to="/">Sign out</NavBtnLink> 
                     </NavBtn>
                 </NavbarContainer>
             </Nav>
@@ -35,4 +32,4 @@ const Navbar = () => {
     )
 }
 
-export default Navbar;
+export default UserNav;

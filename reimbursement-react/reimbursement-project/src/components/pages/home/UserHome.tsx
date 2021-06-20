@@ -2,8 +2,10 @@ import React, {useState} from 'react';
 import Sidebar from '../../navbar/Sidebar'
 import Navbar from '../../navbar/Navbar'
 import Body from '../body/Body';
+import UserBody from '../body/UserBody';
+import UserNav from '../../navbar/UserNav';
 
-const Home = () => {
+const UserHome = () => {
     const [isOpen, setIsOpen] = useState(false)
 
     const toggle = () => {
@@ -11,10 +13,10 @@ const Home = () => {
     }
     return (
         <>
-            <Navbar />
-            <Body />
+            <UserNav />
+            <UserBody />
         </>
     )
 }
 
-export default Home
+export default UserHome

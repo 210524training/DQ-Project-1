@@ -1,13 +1,13 @@
-import express, { Router } from "express";
+import express, { Router } from 'express';
 // import path from 'path';
-import userRouter from "./userRouter";
-import reimbursementRouter from "./reimbursementRouter";
-import userService from "../services/userService";
+import userRouter from './userRouter';
+import reimbursementRouter from './reimbursementRouter';
+import userService from '../services/userService';
 
 const baseRouter = Router();
 
 baseRouter.post(
-  "/login",
+  '/login',
   async (
     req: express.Request<
       unknown,
@@ -16,7 +16,7 @@ baseRouter.post(
       unknown,
       {}
     >,
-    res
+    res,
   ) => {
     const { username, password } = req.body;
 
@@ -27,14 +27,14 @@ baseRouter.post(
     req.session.user = user;
 
     res.json(req.session.user);
-  }
+  },
 );
 
 export async function logout(
   req: express.Request,
-  res: express.Response
+  res: express.Response,
 ): Promise<void> {
-  if (req.session.user) {
+  if(req.session.user) {
     const { username } = req.session.user;
 
     req.session.destroy(() => {
@@ -45,9 +45,9 @@ export async function logout(
   res.status(202).send();
 }
 
-baseRouter.post("/logout", logout);
+baseRouter.post('/logout', logout);
 
-baseRouter.use("/api/v1/users", userRouter);
-baseRouter.use("/api/v1/reimbursements", reimbursementRouter);
+baseRouter.use('/api/v1/users', userRouter);
+baseRouter.use('/api/v1/reimbursements', reimbursementRouter);
 
 export default baseRouter;

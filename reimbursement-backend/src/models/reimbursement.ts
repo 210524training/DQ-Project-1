@@ -2,26 +2,26 @@ export default class Reimbursement {
   constructor(
     public id: number,
     public username: string,
-    public startDate: Date,
+    public startDate: string,
     public location: string,
-    public fileDate: Date,
+    public fileDate: string,
     public type: EventType,
     public amount: number,
     public status: Status,
-    public format: GradeFormat
+    public format: GradeFormat,
   ) {}
 }
 
 export type EventType =
-  | "University Course"
-  | "Seminar"
-  | "Certification Preparation Class"
-  | "Certification"
-  | "Technical Training";
+  | 'University Course'
+  | 'Seminar'
+  | 'Certification Preparation Class'
+  | 'Certification'
+  | 'Technical Training';
 export type Status =
-  | "Pending"
-  | "Pending Department Head"
-  | "Pending BenCo"
-  | "Accepted"
-  | "Rejected";
-export type GradeFormat = "Letter Grade" | "Presentation";
+  | 'Pending'
+  | 'Pending Department Head'
+  | 'Pending BenCo'
+  | 'Accepted'
+  | 'Rejected';
+export type GradeFormat = 'Letter Grade' | 'Presentation';

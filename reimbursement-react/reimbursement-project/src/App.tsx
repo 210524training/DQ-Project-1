@@ -1,13 +1,24 @@
 import React from 'react';
+import { Provider } from 'react-redux'
 import './App.css';
-import Navbar from './components/navbar/Navbar'
+// import Navbar from './components/navbar/Navbar'
 import {BrowserRouter as Router } from 'react-router-dom'
+import store from './store'
+import Home from './components/pages/home/Home';
+// import UserHome from './components/pages/home/UserHome';
+import 'bootstrap/dist/css/bootstrap.min.css';
+// import AppRoutes from './router/AppRoutes';
+import Register from './components/pages/register/Register';
+import LoginPage from './components/pages/login/Login';
+import ReimbursementForm from './components/pages/submit-form/ReimbursementForm';
 
-function App() {
+const App: React.FC = (): JSX.Element => {
   return (
-    <Router>
-      <Navbar />
-    </Router>
+    <Provider store={store}>
+      <Router>
+       <ReimbursementForm />
+      </Router>
+    </Provider>
   );
 }
 
