@@ -24,10 +24,11 @@ export class ReimbursementService {
     return this.dao.rejectReimbursement(reimbursement);
   }
 
-  delete(id: number, username: string): Promise<boolean> {
+  delete(id: string, username: string): Promise<boolean> {
     return this.dao.deleteReimbursement(id, username);
   }
 
+  // havent added to router
   getAllPending(): Promise<Reimbursement[]> {
     return this.dao.viewPending();
   }
@@ -46,6 +47,18 @@ export class ReimbursementService {
 
   supervisorUpdate(reimbursement: Reimbursement): Promise<boolean> {
     return this.dao.setToPendingHead(reimbursement);
+  }
+
+  supervisorView(): Promise<Reimbursement[]> {
+    return this.dao.supervisorView();
+  }
+
+  headView(): Promise<Reimbursement[]> {
+    return this.dao.headView();
+  }
+
+  bencoView(): Promise<Reimbursement[]> {
+    return this.dao.bencoView();
   }
 }
 

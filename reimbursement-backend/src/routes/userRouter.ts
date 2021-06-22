@@ -1,30 +1,27 @@
 import express, { Router } from 'express';
-import userRepo from '../repositories/userRepo';
+import httpCodes from 'http-status-codes';
 import User from '../models/user';
+import userService from '../services/userService';
 
 const userRouter = Router();
 
 userRouter.get('/', async (req, res) => {
-  console.log('Reached our user router get all function');
-
   if(!req.session.isLoggedIn || !req.session.user) {
     throw new Error('You must be logged in to access this functionality');
   }
-
-  res.json(await userRepo.getAll());
+  const users = await userService.getAll();
+  res.status(httpCodes.OK).json(users);
 });
 
-userRouter.get('/:username', async (req, res) => {
-  const { username } = req.params;
-
-  res.json(await userRepo.findByUsername(username));
+userRouter.post('/', async (req, res) => {
+  const result = await userService.register(req.body);
+  if(result) {
+    res.status(httpCodes.OK).json(result);
+  } else {
+    res.status(httpCodes.BAD_REQUEST).json(result);
+  }
 });
 
-userRouter.post(
-  '/',
-  async (req: express.Request<unknown, unknown, User, unknown, {}>, res) => {
-    res.json(await userRepo.attemptRegister(req.body));
-  },
-);
+// delete user, find by username
 
 export default userRouter;

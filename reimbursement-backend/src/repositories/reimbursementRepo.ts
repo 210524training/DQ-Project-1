@@ -24,7 +24,7 @@ export class ReimbursementRepository {
     }
   }
 
-  async deleteReimbursement(id: number, username: string): Promise<boolean> {
+  async deleteReimbursement(id: string, username: string): Promise<boolean> {
     const params: DocumentClient.DeleteItemInput = {
       TableName: 'Reimbursements',
       Key: {
@@ -113,6 +113,84 @@ export class ReimbursementRepository {
         '#gf': 'grading format',
         '#sd': 'start date',
       },
+    };
+
+    const data = await this.docClient.scan(params).promise();
+
+    if(data.Items) {
+      return data.Items as Reimbursement[];
+    }
+
+    return [];
+  }
+
+  async supervisorView(): Promise<Reimbursement[]> {
+    const params: DocumentClient.ScanInput = {
+      TableName: 'Reimbursements',
+      ProjectionExpression: '#u, #id, #fd, #a, #s, #gf, #sd',
+      ExpressionAttributeNames: {
+        '#u': 'username',
+        '#id': 'id',
+        '#fd': 'file date',
+        '#a': 'amount',
+        '#s': 'status',
+        '#gf': 'grading format',
+        '#sd': 'start date',
+      },
+      ExpressionAttributeValues: { ':rs': 'Pending Supervisor' },
+      FilterExpression: '#s = :rs',
+    };
+
+    const data = await this.docClient.scan(params).promise();
+
+    if(data.Items) {
+      return data.Items as Reimbursement[];
+    }
+
+    return [];
+  }
+
+  async headView(): Promise<Reimbursement[]> {
+    const params: DocumentClient.ScanInput = {
+      TableName: 'Reimbursements',
+      ProjectionExpression: '#u, #id, #fd, #a, #s, #gf, #sd',
+      ExpressionAttributeNames: {
+        '#u': 'username',
+        '#id': 'id',
+        '#fd': 'file date',
+        '#a': 'amount',
+        '#s': 'status',
+        '#gf': 'grading format',
+        '#sd': 'start date',
+      },
+      ExpressionAttributeValues: { ':rs': 'Pending Department Head' },
+      FilterExpression: '#s = :rs',
+    };
+
+    const data = await this.docClient.scan(params).promise();
+
+    if(data.Items) {
+      return data.Items as Reimbursement[];
+    }
+
+    return [];
+  }
+
+  async bencoView(): Promise<Reimbursement[]> {
+    const params: DocumentClient.ScanInput = {
+      TableName: 'Reimbursements',
+      ProjectionExpression: '#u, #id, #fd, #a, #s, #gf, #sd',
+      ExpressionAttributeNames: {
+        '#u': 'username',
+        '#id': 'id',
+        '#fd': 'file date',
+        '#a': 'amount',
+        '#s': 'status',
+        '#gf': 'grading format',
+        '#sd': 'start date',
+      },
+      ExpressionAttributeValues: { ':rs': 'Pending BenCo' },
+      FilterExpression: '#s = :rs',
     };
 
     const data = await this.docClient.scan(params).promise();
@@ -239,7 +317,7 @@ export class ReimbursementRepository {
   }
 
   // directSupervisor
-  async updateReimbursement(reimbursement: Reimbursement): Promise<boolean> {
+  async setToPendingHead(reimbursement: Reimbursement): Promise<boolean> {
     const params: DocumentClient.UpdateItemInput = {
       TableName: 'Reimbursements',
       Key: {

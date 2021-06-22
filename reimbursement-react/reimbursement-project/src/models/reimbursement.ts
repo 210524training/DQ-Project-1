@@ -9,7 +9,7 @@ export default class Reimbursement {
       public fileDate: string,
       public type: EventType,
       public amount: number,
-      public status: Status,
+      public status: Status = "Pending Supervisor",
       public format: GradeFormat
     ) {}
   }
@@ -21,7 +21,7 @@ export default class Reimbursement {
     | "Certification"
     | "Technical Training";
   export type Status =
-    | "Pending"
+    | "Pending" | "Pending Supervisor"
     | "Pending Department Head"
     | "Pending BenCo"
     | "Accepted"
