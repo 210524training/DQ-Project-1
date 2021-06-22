@@ -11,7 +11,6 @@ const Register: React.FC<unknown> = (props) => {
     const [username, setUsername] = useState<string>('');
     const [password, setPassword] = useState<string>('');
     const [role, setRole] = useState<Role>();
-    const [confirmPassword, setConfirmPassword] = useState<string>('');
 
     const dispatch = useAppDispatch();
     const history = useHistory();
@@ -29,20 +28,17 @@ const Register: React.FC<unknown> = (props) => {
     setRole(userRole);
   }
 
-   const handleConfirmPasswordChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setConfirmPassword(e.target.value);
-  }
    
     const handleFormSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        if(password.length === 0 || password !== confirmPassword) {
+        if(password.length === 0) {
             console.log('invalid user');
             return;
           }
 
         await dispatch(loginAsync({ username, password }));
-        history.push('/');
+        history.push('/user/home');
     }
 
     return (
@@ -57,8 +53,6 @@ const Register: React.FC<unknown> = (props) => {
                             <FormInput type='text' required onChange={handleUsernameChange}/>
                             <FormLabel htmlFor='for'>Password</FormLabel>
                             <FormInput type='password' required onChange={handlePasswordChange}/>
-                            <FormLabel htmlFor='for'>Confirm Password</FormLabel>
-                            <FormInput type='password' required onChange={handleConfirmPasswordChange}/>
                             <FormLabel htmlFor='for'>Role</FormLabel>
                             <FormSelect onChange={handleRoleChange}>
                                 <FormOption value="Employee">Employee</FormOption>

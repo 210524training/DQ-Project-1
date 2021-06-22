@@ -11,16 +11,13 @@ const UserNav = () => {
         <>
             <Nav>
                 <NavbarContainer>
-                    <NavLogo to='/'>Reimbursements-R-Us</NavLogo>
+                    <NavLogo to='/user/home'>Reimbursements-R-Us</NavLogo>
                     <MobileIcon >
                         <FaBars />
                     </MobileIcon>
                     <NavMenu>
                         <NavItem>
-                            <NavLinks to="/about">About</NavLinks>
-                        </NavItem>
-                        <NavItem>
-                            <NavLinks to="/services">Services</NavLinks>
+                            <NavLinks to="/user/home">Services</NavLinks>
                         </NavItem>
                     </NavMenu>
                     <NavBtn>

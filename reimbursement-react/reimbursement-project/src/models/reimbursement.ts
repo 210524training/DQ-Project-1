@@ -1,10 +1,12 @@
+import { v4 as uuidv4 } from 'uuid';
+
 export default class Reimbursement {
     constructor(
-      public id: number,
+      public id: string = uuidv4(),
       public username: string,
-      public startDate: Date,
+      public startDate: string,
       public location: string,
-      public fileDate: Date,
+      public fileDate: string,
       public type: EventType,
       public amount: number,
       public status: Status,

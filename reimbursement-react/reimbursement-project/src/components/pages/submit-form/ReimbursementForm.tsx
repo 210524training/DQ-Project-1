@@ -3,38 +3,13 @@ import Reimbursement, { Status , GradeFormat, EventType, } from '../../../models
 import User from '../../../models/user';
 import { useAppDispatch } from '../../../hook';
 import { useHistory } from 'react-router-dom';
-import { FormOption, FormSelect } from './FormOptionsElem';
-import { Container, Form, FormButton, FormContent, FormH1, FormInput, FormLabel, FormWrap, Icon } from '../register/RegisterElem';
+import { FormOption, FormSelect, Container, Form, FormButton, FormContent, FormH1, FormInput, FormLabel, FormWrap, Icon} from './FormOptionsElem';
 
 type Props = {
-  requestor?: User,
   reimbursement?: Reimbursement
 }
 
-
-function prettyDate(date: Date): string {
-  return (date.getMonth() + 1) + '/' + (date.getDate() + 1) + '/' + date.getFullYear();
-}
-
 const ReimbursementForm: React.FC<Props> = (props) => {
-
-  // const gradeTypeKeys = Object.keys(GradeFormat);
-  // const gradeTypeValues: string[] = Object.values(GradeTypeEnum);
-  // const gradeTypeArray: {value: string, text: string}[] = [];
-  // for (let i = 0; i < gradeTypeKeys.length; i += 1) {
-  //   const value = gradeTypeKeys[i];
-  //   const text = gradeTypeValues[i];
-  //   gradeTypeArray.push({value, text});
-  // }
-
-  // const eventTypeKeys = Object.keys(EventTypeEnum);
-  // const eventTypeValues: string[] = Object.values(EventTypeEnum);
-  // const eventTypeArray: {value: string, text: string}[] = [];
-  // for (let i = 0; i < eventTypeKeys.length; i += 1) {
-  //   const value = eventTypeKeys[i];
-  //   const text = eventTypeValues[i];
-  //   eventTypeArray.push({value, text});
-  // }
 
   const [username, setUsername] = useState<string>('');
   const [fileDate, setFileDate] = useState<string>('');
@@ -87,24 +62,7 @@ const ReimbursementForm: React.FC<Props> = (props) => {
   const handleFormSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-
-
-    // const pendingReviewer = 'my-boss';
-    
-    // const claimID = new Date().getTime();
-    // addClaim( {
-    //   claimID,
-    //   requestor,
-    //   pendingReviewer,
-    //   requestDate,
-    //   eventDate,
-    //   eventName,
-    //   location,
-    //   eventType,
-    //   gradingFormat,
-    //   description,
-    //   cost,
-    // })
+    //add reimbursement
   }
 
   return  (

@@ -11,12 +11,15 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import Register from './components/pages/register/Register';
 import LoginPage from './components/pages/login/Login';
 import ReimbursementForm from './components/pages/submit-form/ReimbursementForm';
+import Reimbursements from './components/pages/view-reimbursements/Reimbursements';
+import Reimbursement from './models/reimbursement';
+import UserBody from './components/pages/body/UserBody';
 
 const App: React.FC = (): JSX.Element => {
   return (
     <Provider store={store}>
       <Router>
-       <ReimbursementForm />
+        <UserBody />
       </Router>
     </Provider>
   );

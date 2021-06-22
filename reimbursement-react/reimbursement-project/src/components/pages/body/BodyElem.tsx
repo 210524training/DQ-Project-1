@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { Link as LinkRouter } from 'react-router-dom'
 
 export const BodyContainer = styled.div`
     background: #0c0c0c;
@@ -116,6 +117,7 @@ export const ServicesCard = styled.div`
     padding: 30px;
     box-shadow: 0 1px 3px rgba(0,0,0,0.2);
     transition: all 0.2s ease-in-out;
+    text-decoration: none;
 
     &:hover {
         transform: scale(1.02);
@@ -143,6 +145,12 @@ export const UserBodyH1 = styled.h1`
 export const UserBodyH2 = styled.h2`
     font-size: 1rem;
     margin-bottom:10px;
+    text-decoration: none;
     `
 
-            
+export const ServiceLink = styled(LinkRouter)`
+    text-decoration: none;
+    height: 100%;
+    width: 100%;
+`
+

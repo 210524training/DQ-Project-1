@@ -17,10 +17,7 @@ const Navbar = () => {
                     </MobileIcon>
                     <NavMenu>
                         <NavItem>
-                            <NavLinks to="/about">About</NavLinks>
-                        </NavItem>
-                        <NavItem>
-                            <NavLinks to="reimbursements">Services</NavLinks>
+                            <NavLinks to="/login">Services</NavLinks>
                         </NavItem>
                         <NavItem>
                             <NavLinks to="/register">Register</NavLinks>
