@@ -8,9 +8,10 @@ export default class Reimbursement {
     public location: string,
     public fileDate: string,
     public type: EventType,
-    public amount: number,
+    public cost: number,
     public status: Status = 'Pending Supervisor',
     public format: GradeFormat,
+    public projectedReimbursement: number,
   ) {}
 }
 
@@ -19,7 +20,7 @@ export type EventType =
   | 'Seminar'
   | 'Certification Preparation Class'
   | 'Certification'
-  | 'Technical Training';
+  | 'Technical Training' | 'Other';
 export type Status =
   | 'Pending' | 'Pending Supervisor'
   | 'Pending Department Head'

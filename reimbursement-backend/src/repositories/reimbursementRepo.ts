@@ -24,6 +24,33 @@ export class ReimbursementRepository {
     }
   }
 
+  async updateProjectedAmount(reimbursement: Reimbursement): Promise<boolean> {
+    const params: DocumentClient.UpdateItemInput = {
+      TableName: 'Reimbursements',
+      Key: {
+        username: reimbursement.username,
+        id: reimbursement.id,
+      },
+      UpdateExpression: 'SET #pr = :a',
+      ExpressionAttributeValues: {
+        ':a': reimbursement.projectedReimbursement,
+      },
+      ExpressionAttributeNames: {
+        '#pr': 'projected reimbursement',
+      },
+      ReturnValues: 'UPDATED_NEW',
+    };
+    try {
+      const result = await this.docClient.update(params).promise();
+
+      log.info(result);
+      return true;
+    } catch(error) {
+      log.error(error);
+      return false;
+    }
+  }
+
   async deleteReimbursement(id: string, username: string): Promise<boolean> {
     const params: DocumentClient.DeleteItemInput = {
       TableName: 'Reimbursements',
@@ -77,15 +104,18 @@ export class ReimbursementRepository {
     const params: DocumentClient.ScanInput = {
       TableName: 'Reimbursements',
 
-      ProjectionExpression: '#u, #id, #fd, #a, #s, #gf, #sd',
+      ProjectionExpression: '#u, #id, #fd, #c, #s, #gf, #sd #pr, #t, #l',
       ExpressionAttributeNames: {
         '#u': 'username',
         '#id': 'id',
         '#fd': 'file date',
-        '#a': 'amount',
+        '#c': 'cost',
         '#s': 'status',
         '#gf': 'grading format',
         '#sd': 'start date',
+        '#pr': 'projected reimbursement',
+        '#t': 'event type',
+        '#l': 'location',
       },
       ExpressionAttributeValues: { ':user': username },
       FilterExpression: '#u = :user',
@@ -100,19 +130,39 @@ export class ReimbursementRepository {
     return [];
   }
 
-  async getAll(): Promise<Reimbursement[]> {
+  async getById(id: string): Promise<Reimbursement | null> {
     const params: DocumentClient.ScanInput = {
       TableName: 'Reimbursements',
-      ProjectionExpression: '#u, #id, #fd, #a, #s, #gf, #sd',
+
+      ProjectionExpression: '#iden, #u, #sd, #l, #fd, #t, #c, #s, #gf, #pr',
       ExpressionAttributeNames: {
         '#u': 'username',
-        '#id': 'id',
+        '#iden': 'id',
         '#fd': 'file date',
-        '#a': 'amount',
+        '#c': 'cost',
         '#s': 'status',
         '#gf': 'grading format',
         '#sd': 'start date',
+        '#pr': 'projected reimbursement',
+        '#t': 'event type',
+        '#l': 'location',
       },
+      ExpressionAttributeValues: { ':i': id },
+      FilterExpression: '#iden = :i',
+    };
+
+    const data = await this.docClient.scan(params).promise();
+
+    if(data.Items) {
+      return data.Items[0] as Reimbursement;
+    }
+    console.log('wrong');
+    return null;
+  }
+
+  async getAll(): Promise<Reimbursement[]> {
+    const params: DocumentClient.ScanInput = {
+      TableName: 'Reimbursements',
     };
 
     const data = await this.docClient.scan(params).promise();
@@ -239,7 +289,7 @@ export class ReimbursementRepository {
       UpdateExpression: 'SET #s = :rs, #a = :ra',
       ExpressionAttributeValues: {
         ':rs': 'Accepted',
-        ':ra': reimbursement.amount,
+        ':ra': reimbursement.projectedReimbursement,
       },
       ExpressionAttributeNames: {
         '#s': 'status',
@@ -269,7 +319,7 @@ export class ReimbursementRepository {
       UpdateExpression: 'SET #s = :rs, #a = :ra',
       ExpressionAttributeValues: {
         ':rs': 'Pending',
-        ':ra': reimbursement.amount,
+        ':ra': reimbursement.projectedReimbursement,
       },
       ExpressionAttributeNames: {
         '#s': 'status',

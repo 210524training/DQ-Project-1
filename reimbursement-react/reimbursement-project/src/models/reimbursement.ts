@@ -8,9 +8,10 @@ export default class Reimbursement {
       public location: string,
       public fileDate: string,
       public type: EventType,
-      public amount: number,
+      public cost: number,
       public status: Status = "Pending Supervisor",
-      public format: GradeFormat
+      public format: GradeFormat,
+      public projectedReimbursement: number,
     ) {}
   }
   

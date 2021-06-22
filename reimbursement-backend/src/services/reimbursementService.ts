@@ -1,5 +1,6 @@
 import Reimbursement from '../models/reimbursement';
 import reimbursementRepository, { ReimbursementRepository } from '../repositories/reimbursementRepo';
+import updateProjection from './projectedReimbursement';
 
 export class ReimbursementService {
   private dao: ReimbursementRepository;
@@ -18,6 +19,13 @@ export class ReimbursementService {
 
   add(reimbursement: Reimbursement): Promise<boolean> {
     return this.dao.addReimbursement(reimbursement);
+  }
+
+  async update(reimbursement: Reimbursement): Promise<boolean> {
+    const found = await updateProjection(reimbursement);
+    if(found) {
+      return this.dao.updateProjectedAmount(reimbursement);
+    } return false;
   }
 
   reject(reimbursement: Reimbursement): Promise<boolean> {
