@@ -104,18 +104,19 @@ export class ReimbursementRepository {
     const params: DocumentClient.ScanInput = {
       TableName: 'Reimbursements',
 
-      ProjectionExpression: '#u, #id, #fd, #c, #s, #gf, #sd #pr, #t, #l',
+      ProjectionExpression: '#id, #u, #sd, #l, #fd, #t, #c #s, #gf, #pr, #a',
       ExpressionAttributeNames: {
-        '#u': 'username',
         '#id': 'id',
+        '#u': 'username',
+        '#sd': 'start date',
+        '#l': 'location',
         '#fd': 'file date',
+        '#t': 'type',
         '#c': 'cost',
         '#s': 'status',
         '#gf': 'grading format',
-        '#sd': 'start date',
         '#pr': 'projected reimbursement',
-        '#t': 'event type',
-        '#l': 'location',
+        '#a': 'amount awarded',
       },
       ExpressionAttributeValues: { ':user': username },
       FilterExpression: '#u = :user',
@@ -134,21 +135,21 @@ export class ReimbursementRepository {
     const params: DocumentClient.ScanInput = {
       TableName: 'Reimbursements',
 
-      ProjectionExpression: '#iden, #u, #sd, #l, #fd, #t, #c, #s, #gf, #pr',
+      ProjectionExpression: '#id, #u, #sd, #l, #fd, #t, #c #s, #gf, #pr',
       ExpressionAttributeNames: {
+        '#id': 'id',
         '#u': 'username',
-        '#iden': 'id',
+        '#sd': 'start date',
+        '#l': 'location',
         '#fd': 'file date',
+        '#t': 'type',
         '#c': 'cost',
         '#s': 'status',
         '#gf': 'grading format',
-        '#sd': 'start date',
         '#pr': 'projected reimbursement',
-        '#t': 'event type',
-        '#l': 'location',
       },
       ExpressionAttributeValues: { ':i': id },
-      FilterExpression: '#iden = :i',
+      FilterExpression: '#id = :i',
     };
 
     const data = await this.docClient.scan(params).promise();
@@ -175,23 +176,17 @@ export class ReimbursementRepository {
   }
 
   async supervisorView(): Promise<Reimbursement[]> {
-    const params: DocumentClient.ScanInput = {
+    const params: DocumentClient.QueryInput = {
       TableName: 'Reimbursements',
-      ProjectionExpression: '#u, #id, #fd, #a, #s, #gf, #sd',
+      IndexName: 'status-index',
       ExpressionAttributeNames: {
-        '#u': 'username',
-        '#id': 'id',
-        '#fd': 'file date',
-        '#a': 'amount',
         '#s': 'status',
-        '#gf': 'grading format',
-        '#sd': 'start date',
       },
       ExpressionAttributeValues: { ':rs': 'Pending Supervisor' },
       FilterExpression: '#s = :rs',
     };
 
-    const data = await this.docClient.scan(params).promise();
+    const data = await this.docClient.query(params).promise();
 
     if(data.Items) {
       return data.Items as Reimbursement[];
@@ -201,23 +196,17 @@ export class ReimbursementRepository {
   }
 
   async headView(): Promise<Reimbursement[]> {
-    const params: DocumentClient.ScanInput = {
+    const params: DocumentClient.QueryInput = {
       TableName: 'Reimbursements',
-      ProjectionExpression: '#u, #id, #fd, #a, #s, #gf, #sd',
+      IndexName: 'status-index',
       ExpressionAttributeNames: {
-        '#u': 'username',
-        '#id': 'id',
-        '#fd': 'file date',
-        '#a': 'amount',
         '#s': 'status',
-        '#gf': 'grading format',
-        '#sd': 'start date',
       },
       ExpressionAttributeValues: { ':rs': 'Pending Department Head' },
       FilterExpression: '#s = :rs',
     };
 
-    const data = await this.docClient.scan(params).promise();
+    const data = await this.docClient.query(params).promise();
 
     if(data.Items) {
       return data.Items as Reimbursement[];
@@ -227,23 +216,17 @@ export class ReimbursementRepository {
   }
 
   async bencoView(): Promise<Reimbursement[]> {
-    const params: DocumentClient.ScanInput = {
+    const params: DocumentClient.QueryInput = {
       TableName: 'Reimbursements',
-      ProjectionExpression: '#u, #id, #fd, #a, #s, #gf, #sd',
+      IndexName: 'status-index',
       ExpressionAttributeNames: {
-        '#u': 'username',
-        '#id': 'id',
-        '#fd': 'file date',
-        '#a': 'amount',
         '#s': 'status',
-        '#gf': 'grading format',
-        '#sd': 'start date',
       },
       ExpressionAttributeValues: { ':rs': 'Pending BenCo' },
       FilterExpression: '#s = :rs',
     };
 
-    const data = await this.docClient.scan(params).promise();
+    const data = await this.docClient.query(params).promise();
 
     if(data.Items) {
       return data.Items as Reimbursement[];
@@ -253,23 +236,57 @@ export class ReimbursementRepository {
   }
 
   async viewPending(): Promise<Reimbursement[]> {
-    const params: DocumentClient.ScanInput = {
+    const params: DocumentClient.QueryInput = {
       TableName: 'Reimbursements',
-      ProjectionExpression: '#u, #id, #fd, #a, #s, #gf, #sd',
+      IndexName: 'status-index',
       ExpressionAttributeNames: {
-        '#u': 'username',
-        '#id': 'id',
-        '#fd': 'file date',
-        '#a': 'amount',
         '#s': 'status',
-        '#gf': 'grading format',
-        '#sd': 'start date',
       },
       ExpressionAttributeValues: { ':rs': 'Pending' },
       FilterExpression: '#s = :rs',
     };
 
-    const data = await this.docClient.scan(params).promise();
+    const data = await this.docClient.query(params).promise();
+
+    if(data.Items) {
+      return data.Items as Reimbursement[];
+    }
+
+    return [];
+  }
+
+  async viewGrade(): Promise<Reimbursement[]> {
+    const params: DocumentClient.QueryInput = {
+      TableName: 'Reimbursements',
+      IndexName: 'format-index',
+      ExpressionAttributeNames: {
+        '#gf': 'grading format',
+      },
+      ExpressionAttributeValues: { ':f': 'Letter Grade' },
+      FilterExpression: '#gf = :f',
+    };
+
+    const data = await this.docClient.query(params).promise();
+
+    if(data.Items) {
+      return data.Items as Reimbursement[];
+    }
+
+    return [];
+  }
+
+  async viewPresentation(): Promise<Reimbursement[]> {
+    const params: DocumentClient.QueryInput = {
+      TableName: 'Reimbursements',
+      IndexName: 'format-index',
+      ExpressionAttributeNames: {
+        '#gf': 'grading format',
+      },
+      ExpressionAttributeValues: { ':f': 'Presentation' },
+      FilterExpression: '#gf = :f',
+    };
+
+    const data = await this.docClient.query(params).promise();
 
     if(data.Items) {
       return data.Items as Reimbursement[];
@@ -293,7 +310,7 @@ export class ReimbursementRepository {
       },
       ExpressionAttributeNames: {
         '#s': 'status',
-        '#a': 'amount',
+        '#a': 'amount awarded',
       },
       ReturnValues: 'UPDATED_NEW',
     };
@@ -316,14 +333,14 @@ export class ReimbursementRepository {
         username: reimbursement.username,
         id: reimbursement.id,
       },
-      UpdateExpression: 'SET #s = :rs, #a = :ra',
+      UpdateExpression: 'SET #s = :rs, #pr = :ra',
       ExpressionAttributeValues: {
         ':rs': 'Pending',
         ':ra': reimbursement.projectedReimbursement,
       },
       ExpressionAttributeNames: {
         '#s': 'status',
-        '#a': 'amount',
+        '#pr': 'projected reimbursement',
       },
       ReturnValues: 'UPDATED_NEW',
     };

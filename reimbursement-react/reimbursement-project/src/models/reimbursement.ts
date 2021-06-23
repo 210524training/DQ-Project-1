@@ -12,6 +12,7 @@ export default class Reimbursement {
       public status: Status = "Pending Supervisor",
       public format: GradeFormat,
       public projectedReimbursement: number,
+      public amountAwarded: number = 0,
     ) {}
   }
   

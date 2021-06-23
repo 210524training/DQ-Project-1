@@ -1,6 +1,7 @@
 import Reimbursement from '../models/reimbursement';
 import reimbursementRepository, { ReimbursementRepository } from '../repositories/reimbursementRepo';
 import updateProjection from './projectedReimbursement';
+import userService from './userService';
 
 export class ReimbursementService {
   private dao: ReimbursementRepository;
@@ -17,8 +18,11 @@ export class ReimbursementService {
     return this.dao.getByUsername(username);
   }
 
-  add(reimbursement: Reimbursement): Promise<boolean> {
-    return this.dao.addReimbursement(reimbursement);
+  async add(reimbursement: Reimbursement): Promise<boolean> {
+    const result = await userService.awardAvailable(reimbursement.username);
+    if(result) {
+      return this.dao.addReimbursement(reimbursement);
+    } return false;
   }
 
   async update(reimbursement: Reimbursement): Promise<boolean> {
@@ -67,6 +71,14 @@ export class ReimbursementService {
 
   bencoView(): Promise<Reimbursement[]> {
     return this.dao.bencoView();
+  }
+
+  viewGrade(): Promise<Reimbursement[]> {
+    return this.dao.viewGrade();
+  }
+
+  viewPresentation(): Promise<Reimbursement[]> {
+    return this.dao.viewPresentation();
   }
 }
 

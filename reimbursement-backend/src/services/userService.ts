@@ -1,5 +1,7 @@
 // view reimbursement status
 // view messages
+import Message from '../models/message';
+import Reimbursement from '../models/reimbursement';
 import User from '../models/user';
 import userRepository, { UserRepository } from '../repositories/userRepo';
 
@@ -44,6 +46,59 @@ export class UserService {
 
   register(user: User): Promise<boolean> {
     return this.attemptRegister(user);
+  }
+
+  async addNotes(message: Message): Promise<User | null> {
+    // get by username and role?
+    const found = await this.dao.findByRole(message.username, message.role);
+    // if they exist, send info as object
+    const note = `${message.username}: ${message.note}`;
+    // assign it to user.message
+    if(found) {
+      found.messages = note;
+      await this.dao.updateMessage(found);
+      return found;
+    }
+    return null;
+  }
+
+  getNotes(username: string): Promise<Message[]> {
+    return this.dao.getMessages(username);
+  }
+
+  // get user from reimbursement and add amoun awarded value
+  async getUser(reimbursement: Reimbursement): Promise<User | null> {
+    const found = await this.dao.findByUsername(reimbursement.username);
+    if(found) {
+      found.amountAwarded = reimbursement.amountAwarded;
+      return found;
+    } return null;
+  }
+
+  // add award to user table
+  addAward(user:User): Promise<boolean> {
+    return this.dao.addAward(user);
+  }
+
+  async updateAward(reimbursement: Reimbursement): Promise<boolean> {
+    const found = await this.getUser(reimbursement);
+    if(found) {
+      return this.addAward(found);
+    } return false;
+  }
+
+  // check if user has maxed their benefits
+  async awardAvailable(username: string): Promise<boolean> {
+    const result = await this.dao.findByUsername(username);
+
+    if(result) {
+      const amount = result.amountAwarded;
+      if(amount >= 1000) {
+        return false;
+      } if(result === null) {
+        return false;
+      }
+    } return true;
   }
 }
 
