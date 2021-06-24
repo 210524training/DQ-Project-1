@@ -57,9 +57,11 @@ export const deleteReimbursement = async ({id, username}) => {
   const { data } = await reimbursementClient.delete<boolean>('/api/v1/reimbursements/')
 }
 //get pending reimbursement
-
+export const getByUsername = async (username: string) => {
+  const { data } = await reimbursementClient.get<Reimbursement[]>('/api/v1/reimbursements/:username/:role')
+}
 //benco view, sup view, head view
-
+export const getByRole = async ()
 //update amount
 
 //reject 

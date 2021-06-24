@@ -5,7 +5,6 @@ import { useAppDispatch } from '../../../hook';
 import { useHistory } from 'react-router-dom'
 import User, { Role } from '../../../models/user';
 import { FormOption, FormSelect, } from '../submit-form/FormOptionsElem';
-import reimbursementClient from '../../../remote/reimbursement-backend/reimbursement.client';
 import { register } from '../../../remote/reimbursement-backend/reimbursement.api';
 
 const Register: React.FC<unknown> = (props) => {
@@ -40,7 +39,7 @@ const Register: React.FC<unknown> = (props) => {
           }
         // push to dynamodb, login 
         
-        const newUser = new User(username, password, role, '', 0);
+        const newUser = new User(username, password, role, 0);
         const result = await register(newUser);
         if (result) {
             console.log('successfully created acount')
@@ -67,7 +66,7 @@ const Register: React.FC<unknown> = (props) => {
                             <FormSelect onChange={handleRoleChange}>
                                 <FormOption value="Employee">Employee</FormOption>
                                 <FormOption value="Supervisor">Supervisor</FormOption>
-                                <FormOption value="Head">Department Head</FormOption>
+                                <FormOption value="Department Head">Department Head</FormOption>
                                 <FormOption value="Benco">Benefits Coordinator</FormOption>
                             {console.log(role)}
                             </FormSelect>

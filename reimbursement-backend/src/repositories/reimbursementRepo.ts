@@ -261,9 +261,10 @@ export class ReimbursementRepository {
       IndexName: 'format-index',
       ExpressionAttributeNames: {
         '#gf': 'grading format',
+        '#s': 'status',
       },
-      ExpressionAttributeValues: { ':f': 'Letter Grade' },
-      FilterExpression: '#gf = :f',
+      ExpressionAttributeValues: { ':f': 'Letter Grade', ':st': 'Pending' },
+      FilterExpression: '#gf = :f AND #s = :st',
     };
 
     const data = await this.docClient.query(params).promise();
@@ -281,9 +282,10 @@ export class ReimbursementRepository {
       IndexName: 'format-index',
       ExpressionAttributeNames: {
         '#gf': 'grading format',
+        '#s': 'status',
       },
-      ExpressionAttributeValues: { ':f': 'Presentation' },
-      FilterExpression: '#gf = :f',
+      ExpressionAttributeValues: { ':f': 'Presentation', ':st': 'Pending' },
+      FilterExpression: '#gf = :f AND #s = :st',
     };
 
     const data = await this.docClient.query(params).promise();

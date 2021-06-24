@@ -1,58 +1,36 @@
-import express, { Router } from 'express';
-import httpCodes from 'http-status-codes';
+import express, {
+  Router, Request, Response,
+} from 'express';
 import userService from '../services/userService';
+import log from '../log';
 
-const userRouter = Router();
+const userRouter = Router({ mergeParams: true });
 
-userRouter.get('/', async (req, res) => {
-  if(!req.session.isLoggedIn || !req.session.user) {
-    throw new Error('You must be logged in to access this functionality');
-  }
-  const users = await userService.getAll();
-  res.status(httpCodes.OK).json(users);
-});
+export async function postUser(req: Request, res: Response): Promise<void> {
+  log.info('Request to create a user');
+  const { user } = req.body;
 
-userRouter.get('/:username', async (req, res) => {
-  if(!req.session.isLoggedIn || !req.session.user) {
-    throw new Error('You must be logged in to access this functionality');
-  }
-  const messages = await userService.getNotes(req.body);
-  res.status(httpCodes.OK).json(messages);
-});
-
-userRouter.post('/', async (req, res) => {
-  const result = await userService.register(req.body);
-  if(result) {
-    res.status(httpCodes.OK).json(result);
+  const result = await userService.register(user);
+  if(!result) {
+    res.status(500);
   } else {
-    res.status(httpCodes.BAD_REQUEST).json(result);
+    res.status(201);
   }
-});
+}
 
-userRouter.put('/', async (req, res) => {
-  if(!req.session.isLoggedIn || !req.session.user) {
-    throw new Error('You must be logged in to access this functionality');
-  }
-  const result = await userService.updateAward(req.body);
-  if(result) {
-    res.status(httpCodes.OK).json(result);
+export async function putAward(req: Request, res: Response): Promise<void> {
+  log.info('Request to post amount awarded');
+  const { reimbursement } = req.body;
+
+  const result = await userService.updateAward(reimbursement);
+  if(!result) {
+    res.status(500);
   } else {
-    res.status(httpCodes.BAD_REQUEST).json(result);
+    res.status(201);
   }
-});
+}
 
-userRouter.put('/', async (req, res) => {
-  if(!req.session.isLoggedIn || !req.session.user) {
-    throw new Error('You must be logged in to access this functionality');
-  }
-  const result = await userService.addNotes(req.body);
-  if(result) {
-    res.status(httpCodes.OK).json(result);
-  } else {
-    res.status(httpCodes.BAD_REQUEST).json(result);
-  }
-});
-
-// delete user, find by username
+userRouter.post('/register', postUser);
+userRouter.put('/reimbursement/accept', putAward);
 
 export default userRouter;

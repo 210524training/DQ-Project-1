@@ -1,6 +1,5 @@
 // view reimbursement status
 // view messages
-import Message from '../models/message';
 import Reimbursement from '../models/reimbursement';
 import User from '../models/user';
 import userRepository, { UserRepository } from '../repositories/userRepo';
@@ -48,23 +47,23 @@ export class UserService {
     return this.attemptRegister(user);
   }
 
-  async addNotes(message: Message): Promise<User | null> {
-    // get by username and role?
-    const found = await this.dao.findByRole(message.username, message.role);
-    // if they exist, send info as object
-    const note = `${message.username}: ${message.note}`;
-    // assign it to user.message
-    if(found) {
-      found.messages = note;
-      await this.dao.updateMessage(found);
-      return found;
-    }
-    return null;
-  }
+  // async addNotes(username: string): Promise<User | null> {
+  //   // get by username and role?
+  //   const found = await this.dao.findByRole(username);
+  //   // if they exist, send info as object
+  //   const note = `${username}: ${note}`;
+  //   // assign it to user.message
+  //   if(found) {
+  //     found.messages = note;
+  //     await this.dao.updateMessage(found);
+  //     return found;
+  //   }
+  //   return null;
+  // }
 
-  getNotes(username: string): Promise<Message[]> {
-    return this.dao.getMessages(username);
-  }
+  // getNotes(username: string): Promise<Message[]> {
+  //   return this.dao.getMessages(username);
+  // }
 
   // get user from reimbursement and add amoun awarded value
   async getUser(reimbursement: Reimbursement): Promise<User | null> {

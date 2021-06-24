@@ -2,7 +2,6 @@ import { DocumentClient } from 'aws-sdk/clients/dynamodb';
 import User, { Role } from '../models/user';
 import dynamo from '../connection/connectionService';
 import log from '../log';
-import Message from '../models/message';
 
 export class UserRepository {
   public currentUser: User | undefined;
@@ -18,7 +17,6 @@ export class UserRepository {
         role: user.role,
         username: user.username,
         password: user.password,
-        messages: user.messages,
       },
       ConditionExpression: 'attribute_not_exists(username)',
     };
@@ -85,32 +83,32 @@ export class UserRepository {
     return null;
   }
 
-  async updateMessage(user:User): Promise<boolean> {
-    const params: DocumentClient.UpdateItemInput = {
-      TableName: 'USERS-table',
-      Key: {
-        username: user.username,
-        role: user.role,
-      },
-      UpdateExpression: 'SET #m = :n',
-      ExpressionAttributeValues: {
-        ':n': user.messages,
-      },
-      ExpressionAttributeNames: {
-        '#m': 'messages',
-      },
-      ReturnValues: 'UPDATED_NEW',
-    };
-    try {
-      const result = await this.docClient.update(params).promise();
+  // async updateMessage(user:User): Promise<boolean> {
+  //   const params: DocumentClient.UpdateItemInput = {
+  //     TableName: 'USERS-table',
+  //     Key: {
+  //       username: user.username,
+  //       role: user.role,
+  //     },
+  //     UpdateExpression: 'SET #m = :n',
+  //     ExpressionAttributeValues: {
+  //       ':n': user.messages,
+  //     },
+  //     ExpressionAttributeNames: {
+  //       '#m': 'messages',
+  //     },
+  //     ReturnValues: 'UPDATED_NEW',
+  //   };
+  //   try {
+  //     const result = await this.docClient.update(params).promise();
 
-      log.info(result);
-      return true;
-    } catch(error) {
-      log.error(error);
-      return false;
-    }
-  }
+  //     log.info(result);
+  //     return true;
+  //   } catch(error) {
+  //     log.error(error);
+  //     return false;
+  //   }
+  // }
 
   async deleteUser(user: User): Promise<boolean> {
     const params: DocumentClient.DeleteItemInput = {
@@ -151,26 +149,26 @@ export class UserRepository {
     return [];
   }
 
-  async getMessages(username: string): Promise<Message[]> {
-    const params: DocumentClient.ScanInput = {
-      TableName: 'USERS-table',
-      ProjectionExpression: '#m',
-      ExpressionAttributeNames: {
-        '#m': 'messages',
-        '#u': 'username',
-      },
-      ExpressionAttributeValues: { ':user': username },
-      FilterExpression: '#u = :user',
-    };
+  // async getMessages(username: string): Promise<Message[]> {
+  //   const params: DocumentClient.ScanInput = {
+  //     TableName: 'USERS-table',
+  //     ProjectionExpression: '#m',
+  //     ExpressionAttributeNames: {
+  //       '#m': 'messages',
+  //       '#u': 'username',
+  //     },
+  //     ExpressionAttributeValues: { ':user': username },
+  //     FilterExpression: '#u = :user',
+  //   };
 
-    const data = await this.docClient.scan(params).promise();
+  //   const data = await this.docClient.scan(params).promise();
 
-    if(data.Items) {
-      return data.Items as Message[];
-    }
+  //   if(data.Items) {
+  //     return data.Items as Message[];
+  //   }
 
-    return [];
-  }
+  //   return [];
+  // }
 
   async addAward(user: User): Promise<boolean> {
     const params: DocumentClient.UpdateItemInput = {

@@ -1,30 +1,44 @@
+import { Props, useState } from 'react';
 import * as ReactBootstrap from 'react-bootstrap'
+import { useAppSelector } from '../../../hook';
 import Reimbursement from '../../../models/reimbursement';
-
-//reimbursements array
-type Props = {
-    reimbursements: Reimbursement[]
-}
+import { getByUsername } from '../../../remote/reimbursement-backend/reimbursement.api';
+import { selectUser, UserState } from '../../../slices/user.slice';
 
 //add conditional that changes the table based on role 
+
 
 
 const ReimbursementsTable: React.FC<Props> = ((props) => { 
 
     
     //render reimbursements array 
-    const renderReimbursement = (reimbursement: any, index: any) => {
+    const RenderReimbursement: React.FC = (): JSX.Element => {
+
+        const history = useHistory();
+        const user = useAppSelector<UserState>(selectUser);
+        const reimbursementArray = [];
+
+        if (user) {
+            switch (user.role) {
+            case 'Employee': 
+            const table = await getByUsername()
+            }
+        }
+
         return (
-            <tr key={index}>
+            <tr>
                 <td>{reimbursement.id}</td>
                 <td>{reimbursement.username}</td>
                 <td>{reimbursement.location}</td>
                 <td>{reimbursement.startDate}</td>
                 <td>{reimbursement.fileDate}</td>
                 <td>{reimbursement.type}</td>
-                <td>{reimbursement.amount}</td>
+                <td>{reimbursement.cost}</td>
                 <td>{reimbursement.status}</td>
                 <td>{reimbursement.format}</td>
+                <td>{reimbursement.projectedReimbursement}</td>
+                <td>{reimbursement.amountAwarded}</td>
             </tr>
         )
     }
@@ -43,10 +57,12 @@ const ReimbursementsTable: React.FC<Props> = ((props) => {
                         <th>Amount</th>
                         <th>Status</th>
                         <th>Grading Format</th>
+                        <th>Projected Reimbursement</th>
+                        <th>Amount Awarded</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {props.reimbursements.map(renderReimbursement)}
+                    {props.reimbursements.map(renderReimbursements)}
                 </tbody>
             </ReactBootstrap.Table>
         </div>

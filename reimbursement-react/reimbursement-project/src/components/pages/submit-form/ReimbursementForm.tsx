@@ -1,12 +1,9 @@
 import React, { ChangeEvent, FormEvent, useEffect, useState } from 'react';
-import Reimbursement, { Status , GradeFormat, EventType, } from '../../../models/reimbursement';
-import User from '../../../models/user';
+import Reimbursement from '../../../models/reimbursement';
 import { useAppDispatch } from '../../../hook';
 import { useHistory } from 'react-router-dom';
 import { FormOption, FormSelect, Container, Form, FormButton, FormContent, FormH1, FormInput, FormLabel, FormWrap, Icon} from './FormOptionsElem';
-import { log } from 'console';
 import { addReimbursement } from '../../../remote/reimbursement-backend/reimbursement.api';
-import { type } from 'os';
 import { v4 as uuidv4 } from 'uuid'
 
 type Props = {
