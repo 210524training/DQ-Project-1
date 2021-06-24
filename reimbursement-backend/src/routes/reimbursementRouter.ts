@@ -238,13 +238,13 @@ async function viewFinalSubmission(req: Request, res: Response): Promise<void> {
   );
 }
 
-reimbursementRouter.get('/reimbursements/:username/:role', getByRole);
-reimbursementRouter.get('/reimbursements/:role', viewFinalSubmission);
-reimbursementRouter.post('/reimbursement/form/submit', postReimbursement);
-reimbursementRouter.put('/reimbursement/update', updateProjectedAmount);
-reimbursementRouter.put('/reimbursement/accept', acceptReimbursement);
-reimbursementRouter.put('/reimbursement/reject', rejectReimbursement);
-reimbursementRouter.put('/reimbursement/:role', updateByRole);
+reimbursementRouter.get('/:username/:role', getByRole);
+reimbursementRouter.get('/:role', viewFinalSubmission);
+reimbursementRouter.post('/form/submit', postReimbursement);
+reimbursementRouter.put('/update', updateProjectedAmount);
+reimbursementRouter.put('/accept', acceptReimbursement);
+reimbursementRouter.put('/reject', rejectReimbursement);
+reimbursementRouter.put('/accept/:role', updateByRole);
 reimbursementRouter.delete('/:id/:username', deleteClaim);
 
 export default reimbursementRouter;

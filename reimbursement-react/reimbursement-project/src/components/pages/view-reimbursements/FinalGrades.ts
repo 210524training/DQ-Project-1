@@ -10,7 +10,7 @@ import { FormButton } from '../login/LoginElem';
 
 type ButtonEvent = React.MouseEvent<HTMLButtonElement>;
 
-const ReimbursementPage = () => {
+const FinalGradesPage = () => {
 
     const history = useHistory();
     const user = useAppSelector<UserState>(selectUser);
@@ -25,8 +25,11 @@ const ReimbursementPage = () => {
         } else history.push('/');
     }
     const handleButtonClick = (e: ButtonEvent): void => {
+        e.preventDefault();
+
         if(user) {
-        history.push(`/reimbursements/${user.role}`)
+        history.push(`/reimbursement/accept`)
+        await viewFinalGrade();
     }
         alert('something went wrong')
 }
@@ -35,24 +38,7 @@ const ReimbursementPage = () => {
         handleReimbursementChange()}
         );
 
-
-    return (
-        <>
-        <FormButton onClick= {handleButtonClick}>View Final Grades</FormButton> 
-        <table>
-         <tr>{Object.keys(reimbursements[0]).map((key) => (
-             <th>{key}</th>
-         ))}
-         </tr>
-         {reimbursements.map((item) => (
-             <tr>{Object.values(item).map((val) => (
-                 <td>{val}</td>
-         ))}
-         </tr>
-        ))}
-        </table>
-        </>
-        )
+    
 }
 
 export default ReimbursementPage;

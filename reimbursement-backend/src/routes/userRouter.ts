@@ -31,6 +31,6 @@ export async function putAward(req: Request, res: Response): Promise<void> {
 }
 
 userRouter.post('/register', postUser);
-userRouter.put('/reimbursement/accept', putAward);
+userRouter.put('/update', putAward);
 
 export default userRouter;

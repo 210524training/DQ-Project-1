@@ -29,7 +29,7 @@ export const register = async ({username, password, role}: User): Promise<boolea
 
 //add reimbursement 
 export const addReimbursement = async ({id, username, startDate, location, fileDate, type, cost, status, format, projectedReimbursement, amountAwarded}: Reimbursement): Promise<boolean> => {
-  const response = await reimbursementClient.post('/api/v1/reimbursements', {
+  const response = await reimbursementClient.post('/api/v1/reimbursements/form/submit', {
     Reimbursement: {
       id: uuidv4(), 
       username,
@@ -53,23 +53,67 @@ export const addReimbursement = async ({id, username, startDate, location, fileD
 }
 
 //delete reimbursement
-export const deleteReimbursement = async ({id, username}) => {
-  const { data } = await reimbursementClient.delete<boolean>('/api/v1/reimbursements/')
+export const deleteReimbursement = async (id: number, username: string) => {
+  const { data } = await reimbursementClient.delete<boolean>(`/api/v1/reimbursements/${id}/${username}`)
 }
 //get pending reimbursement
-export const getByRole = async (username: string, role: string): Promise<Reimbursement[]> => {
+export const getByRole = async ( role: string, username: string,): Promise<Reimbursement[]> => {
   const { data } = await reimbursementClient.get<Reimbursement[]>(`/api/v1/reimbursements/${username}/${role}`);
   return data
 }
 
 //update amount
+export const updateProjectedAmount = async(reimbursement: Reimbursement ): Promise<boolean> => {
+  const response = await reimbursementClient.put('/api/v1/reimbursments/update', {reimbursement,});
 
-//reject 
+  if(response) {
+    return true;
+  }
+  return false;
+}
 
-//accept 
+export const putAward = async(reimbursement: Reimbursement ): Promise<boolean> => {
+  const response = await reimbursementClient.put('/api/v1/users/update', {reimbursement,});
 
+  if(response) {
+    return true;
+  }
+  return false;
+}
+
+
+
+export const accept = async(reimbursement: Reimbursement ): Promise<boolean> => {
+  const response = await reimbursementClient.put('/api/v1/reimbursments/accept', {reimbursement,});
+
+  if(response) {
+    return true;
+  }
+  return false;
+}
+
+
+export const reject = async(reimbursement: Reimbursement): Promise<boolean> => {
+  const response = await reimbursementClient.put(`/api/v1/reimbursments/reject`, {reimbursement,});
+
+  if(response) {
+    return true;
+  }
+  return false;
+}
 //benco head and super update 
+export const updateByRole = async(reimbursement: Reimbursement, role: string, ): Promise<boolean> => {
+  const response = await reimbursementClient.put(`/api/v1/reimbursments/accept/${role}`, {reimbursement,});
 
-//view grade
+  if(response) {
+    return true;
+  }
+  return false;
+}
+
 
 //view presentation
+export const viewFinalSubmission = async (role: string): Promise<Reimbursement[]> => {
+  const { data } = await reimbursementClient.get<Reimbursement[]>(`/api/v1/reimbursements/${role}`);
+  return data
+}
