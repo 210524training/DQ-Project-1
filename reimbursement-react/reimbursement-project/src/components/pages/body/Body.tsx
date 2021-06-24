@@ -10,7 +10,7 @@ const Body = () => {
             <BodyContent>
                 <BodyH1>Get Paid to Train</BodyH1>
                 <BodyP>
-                    Receive up to $1000 per year in reimbursements for select courses 
+                    Receive up to $1000 per year in reimbursements for select courses
                 </BodyP>
             </BodyContent>
         </BodyContainer>

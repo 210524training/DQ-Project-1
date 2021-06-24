@@ -2,7 +2,7 @@ export default class User {
   constructor(
     public username: string,
     public password: string,
-    public role: Role,
+    public role: string,
     public messages: string = '',
     public amountAwarded: number = 0,
   ) {} // reimbursement balance?

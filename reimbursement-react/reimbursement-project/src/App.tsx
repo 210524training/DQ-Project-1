@@ -13,7 +13,7 @@ import LoginPage from './components/pages/login/Login';
 import ReimbursementForm from './components/pages/submit-form/ReimbursementForm';
 import Reimbursements from './components/pages/view-reimbursements/Reimbursements';
 import Reimbursement from './models/reimbursement';
-import UserBody from './components/pages/body/UserBody';
+import UserBody from './components/pages/body/services';
 
 const App: React.FC = (): JSX.Element => {
   return (

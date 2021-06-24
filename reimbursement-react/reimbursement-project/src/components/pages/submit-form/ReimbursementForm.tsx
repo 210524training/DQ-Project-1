@@ -4,6 +4,10 @@ import User from '../../../models/user';
 import { useAppDispatch } from '../../../hook';
 import { useHistory } from 'react-router-dom';
 import { FormOption, FormSelect, Container, Form, FormButton, FormContent, FormH1, FormInput, FormLabel, FormWrap, Icon} from './FormOptionsElem';
+import { log } from 'console';
+import { addReimbursement } from '../../../remote/reimbursement-backend/reimbursement.api';
+import { type } from 'os';
+import { v4 as uuidv4 } from 'uuid'
 
 type Props = {
   reimbursement?: Reimbursement
@@ -15,11 +19,10 @@ const ReimbursementForm: React.FC<Props> = (props) => {
   const [fileDate, setFileDate] = useState<string>('');
   const [startDate, setStartDate] = useState<string>('');
   const [location, setLocation] = useState<string>('');
-  const [type, setType] = useState<EventType>();
-  const [amount, setAmount] = useState<number>();
-  const [status, setStatus] = useState<Status>();
-  const [format, setFormat] = useState<GradeFormat>();
-  const [id, setId] = useState<number>();
+  const [type, setType] = useState<string>('');
+  const [cost, setCost] = useState<number>(0);
+  const [format, setFormat] = useState<string>('');
+
 
   const dispatch = useAppDispatch();
   const history = useHistory();
@@ -38,52 +41,67 @@ const ReimbursementForm: React.FC<Props> = (props) => {
     setStartDate(e.target.value);
     console.log(new Date(e.target.value));
   }
+
+  function weekFromNow() {
+    let today = Date.parse(fileDate);
+    let stringToDate = new Date(fileDate)
+    let nextweek = new Date(stringToDate.getFullYear(), stringToDate.getMonth(), stringToDate.getDate() + 7);
+    let nextweekParsed = Date.parse(nextweek.toString());
+    if ((nextweekParsed - today) >= 604800000) {
+      return true
+    } else return false;
+  }
+
   const handleLocationChange = (e: ChangeEvent<HTMLInputElement>) => {
     setLocation(e.target.value);
   }
 
   const handleTypeChange = (e: ChangeEvent<HTMLSelectElement>) => {
-    const eventType: EventType = e.target.value as EventType;
+    const eventType: string = e.target.value;
     setType(eventType);
   }
 
   const handleFormatChange = (e: ChangeEvent<HTMLSelectElement>) => {
-    const gradeFormat: GradeFormat = e.target.value as GradeFormat;
+    const gradeFormat: string = e.target.value;
     setFormat(gradeFormat);
   }
 
-  const handleAmountChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if(!Number.isNaN(e.target.value)) {
-      setAmount(Number(e.target.value));
-    }
+  const handleCostChange = (e: ChangeEvent<HTMLInputElement>) => {
+      setCost(Number(e.target.value));
   }
 
 
   const handleFormSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
-    //add reimbursement
+    if (weekFromNow()) {
+      //add reimbursement
+      const newReimbursement = new Reimbursement(uuidv4(), username, startDate, location, fileDate, type, cost, 'Pending Supervisor', format, 0, 0)
+      addReimbursement(newReimbursement);
+      alert('reimbursement application submitted');
+      history.push('/services')
+    } else throw new Error('start date must be at least 7 days from file date');
+    return
   }
 
   return  (
     <>
         <Container>
             <FormWrap>
-                <Icon to="/">Reimbursements-R-Us</Icon>
+                <Icon to="/home/:user">Reimbursements-R-Us</Icon>
                 <FormContent>
                     <Form onSubmit={handleFormSubmit}>
                         <FormH1>Reimbursement Application</FormH1>
-                        <FormLabel htmlFor='for'>Username</FormLabel>
+                        <FormLabel htmlFor='username'>Username</FormLabel>
                         <FormInput type='text' required onChange={handleUsernameChange}/>
-                        <FormLabel htmlFor='for'>Location</FormLabel>
+                        <FormLabel htmlFor='location'>Location</FormLabel>
                         <FormInput type='text' required onChange={handleLocationChange}/>
-                        <FormLabel htmlFor='for'>Amount</FormLabel>
-                        <FormInput type='text' required onChange={handleAmountChange}/>
-                        <FormLabel htmlFor='for'>Start Date</FormLabel>
+                        <FormLabel htmlFor='amount'>Amount</FormLabel>
+                        <FormInput type='text' required onChange={handleCostChange}/>
+                        <FormLabel htmlFor='start date'>Start Date</FormLabel>
                         <FormInput type='date' required onChange={handleStartDateChange}/>
-                        <FormLabel htmlFor='for'>Today's Date</FormLabel>
+                        <FormLabel htmlFor='todays date'>Today's Date</FormLabel>
                         <FormInput type='date' required onChange={handleFileDateChange}/>
-                        <FormLabel htmlFor='for'>Event Type</FormLabel>
+                        <FormLabel htmlFor='event type'>Event Type</FormLabel>
                         <FormSelect onChange={handleTypeChange}>
                           <FormOption value="University Course">University Course</FormOption>
                           <FormOption value="Seminar">Seminar</FormOption>
@@ -91,12 +109,12 @@ const ReimbursementForm: React.FC<Props> = (props) => {
                           <FormOption value="Certification">Certification</FormOption>
                           <FormOption value="Technical Training">Technical Training</FormOption>
                         </FormSelect>
-                        <FormLabel htmlFor='for'>Grade Format</FormLabel>
+                        <FormLabel htmlFor='grade format'>Grade Format</FormLabel>
                         <FormSelect onChange={handleFormatChange}>
                           <FormOption value="Letter Grade">Letter Grade</FormOption>
                           <FormOption value="Presentation">Presentation</FormOption>
                         </FormSelect>
-                        <FormButton type='submit'>Register</FormButton>
+                        <FormButton type='submit'>Submit</FormButton>
                     </Form>
                 </FormContent>
             </FormWrap>

@@ -3,7 +3,7 @@ import { ServiceIcon, ServiceLink, ServicesCard, UserBodyContainer, UserBodyH1, 
 import Image1 from './images/image1.svg'
 import Image2 from './images/image2.svg'
 
-const UserBody = () => {
+const ServicesPage = () => {
     return (
         <UserBodyContainer>
             <UserBodyH1>Our Services</UserBodyH1>
@@ -25,4 +25,4 @@ const UserBody = () => {
     )
 }
 
-export default UserBody
+export default ServicesPage

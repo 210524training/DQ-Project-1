@@ -11,13 +11,13 @@ const UserNav = () => {
         <>
             <Nav>
                 <NavbarContainer>
-                    <NavLogo to='/user/home'>Reimbursements-R-Us</NavLogo>
+                    <NavLogo to='/'>Reimbursements-R-Us</NavLogo>
                     <MobileIcon >
                         <FaBars />
                     </MobileIcon>
                     <NavMenu>
                         <NavItem>
-                            <NavLinks to="/user/home">Services</NavLinks>
+                            <NavLinks to="/services">Services</NavLinks>
                         </NavItem>
                     </NavMenu>
                     <NavBtn>

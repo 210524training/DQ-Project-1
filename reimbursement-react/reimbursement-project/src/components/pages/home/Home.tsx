@@ -4,11 +4,7 @@ import Navbar from '../../navbar/Navbar'
 import Body from '../body/Body';
 
 const Home = () => {
-    const [isOpen, setIsOpen] = useState(false)
 
-    const toggle = () => {
-        setIsOpen(!isOpen)
-    }
     return (
         <>
             <Navbar />

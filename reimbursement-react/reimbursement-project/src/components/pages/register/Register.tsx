@@ -3,14 +3,16 @@ import { Container, Form, FormButton, FormContent, FormH1, FormInput, FormLabel,
 import { loginAsync } from '../../../slices/user.slice';
 import { useAppDispatch } from '../../../hook';
 import { useHistory } from 'react-router-dom'
-import { Role } from '../../../models/user';
+import User, { Role } from '../../../models/user';
 import { FormOption, FormSelect, } from '../submit-form/FormOptionsElem';
+import reimbursementClient from '../../../remote/reimbursement-backend/reimbursement.client';
+import { register } from '../../../remote/reimbursement-backend/reimbursement.api';
 
 const Register: React.FC<unknown> = (props) => {
 
     const [username, setUsername] = useState<string>('');
     const [password, setPassword] = useState<string>('');
-    const [role, setRole] = useState<Role>();
+    const [role, setRole] = useState<string>('');
 
     const dispatch = useAppDispatch();
     const history = useHistory();
@@ -36,9 +38,17 @@ const Register: React.FC<unknown> = (props) => {
             console.log('invalid user');
             return;
           }
-
+        // push to dynamodb, login 
+        
+        const newUser = new User(username, password, role, '', 0);
+        const result = await register(newUser);
+        if (result) {
+            console.log('successfully created acount')
+        } else {
+            console.log('unable to register. Username taken')
+        }
         await dispatch(loginAsync({ username, password }));
-        history.push('/user/home');
+        history.push('/');
     }
 
     return (

@@ -28,9 +28,6 @@
 //       <Route path='/register'>
 //         <Register />
 //       </Route>
-//       <Route path='/about'>
-//         <About />
-//       </Route>
 //     </Switch>
 //     </>
 //   );
@@ -45,6 +42,9 @@
 //       </Route>
 //       <Route path='/reimbursements'>
 //         <Reimbursements />
+//       </Route>
+//       <Route path='/services'>
+//         <Services />
 //       </Route>
 //       <Route path='/form'>
 //         <SubmitForm />
