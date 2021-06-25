@@ -10,17 +10,31 @@ import UserHome from '../components/pages/home/UserHome';
 import ServicesPage from '../components/pages/body/services';
 import ReimbursementForm from '../components/pages/submit-form/ReimbursementForm';
 import FinalGradesPage from '../components/pages/view-reimbursements/FinalGrades';
+import user from '../models/user';
 
 const AppRoutes: React.FC<unknown> = (props) => {
 
+      if(user) {
+        return ( 
+    <Switch>
+        <Route exact path='/'>
+            <Home />
+        </Route>
+        <Route path='/login'>
+            <LoginPage />
+        </Route>
+        <Route path='/register'>
+            <Register />
+        </Route>
+    </Switch>
+        )
+      } else {
+        return(
+    
 
-  return (
-    <>
-    <Home />
-    <br />
     <Switch>
       <Route exact path='/'>
-        <Home />
+        <UserHome />
       </Route>
       <Route path='/login'>
         <LoginPage />
@@ -47,8 +61,8 @@ const AppRoutes: React.FC<unknown> = (props) => {
         <FinalGradesPage />
       </Route>
     </Switch>
-    </>
   )
+      }
 }
 
 export default AppRoutes;
