@@ -1,34 +1,39 @@
-import express, { Router } from 'express';
+import express, { Router, Request, Response } from 'express';
 // import path from 'path';
+import { log } from 'console';
 import userRouter from './userRouter';
 import reimbursementRouter from './reimbursementRouter';
 import userService from '../services/userService';
 
 const baseRouter = Router();
 
-baseRouter.post(
-  '/login',
-  async (
-    req: express.Request<
-      unknown,
-      unknown,
-      { username: string; password: string },
-      unknown,
-      {}
-    >,
-    res,
-  ) => {
-    const { username, password } = req.body;
+// baseRouter.post('/login', async (req: express.Request<unknown, unknown, { username: string, password: string }, unknown, {}>, res) => {
+//   const { username, password } = req.body;
 
-    const user = await userService.login(username, password);
+//   try {
+//     const current = await userService.login(username, password);
+//     req.session.isLoggedIn = true;
 
-    req.session.isLoggedIn = true;
+//     req.session.user = current;
 
-    req.session.user = user;
+//     res.json(req.session.user);
+//     res.status(202).send();
+//   } catch(error) {
+//     res.status(401).send();
+//   }
+// });
 
-    res.json(req.session.user);
-  },
-);
+async function login(req: Request, res: Response): Promise<void> {
+  const { username, password } = req.body;
+
+  const user = await userService.login(username, password);
+
+  req.session.isLoggedIn = true;
+  req.session.user = user;
+
+  res.json(req.session.user);
+  res.status(202);
+}
 
 export async function logout(
   req: express.Request,
@@ -46,7 +51,7 @@ export async function logout(
 }
 
 baseRouter.post('/logout', logout);
-
+baseRouter.post('/login', login);
 baseRouter.use('/api/v1/users', userRouter);
 baseRouter.use('/api/v1/reimbursements', reimbursementRouter);
 

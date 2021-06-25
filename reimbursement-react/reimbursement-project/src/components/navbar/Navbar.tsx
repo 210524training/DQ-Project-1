@@ -1,7 +1,7 @@
 import React, { Props } from 'react';
 import {FaBars} from 'react-icons/fa'
-import { Nav, NavbarContainer, NavLogo, MobileIcon, NavMenu, NavItem, NavLinks, NavBtn, NavBtnLink, } from './NavbarElem';
-
+import { Nav, NavbarContainer, NavLogo, MobileIcon, NavMenu, NavItem, NavBtn, NavBtnLink, NavLinks, } from './NavbarElem';
+import { NavLink } from 'react-router-dom';
 
 
 const Navbar = () => {

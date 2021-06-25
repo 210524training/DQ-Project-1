@@ -13,9 +13,7 @@ import FinalGradesPage from '../components/pages/view-reimbursements/FinalGrades
 
 const AppRoutes: React.FC<unknown> = (props) => {
 
-  const user = useAppSelector<UserState>(selectUser);
 
-  if(!user) {
   return (
     <>
     <Home />
@@ -30,15 +28,9 @@ const AppRoutes: React.FC<unknown> = (props) => {
       <Route path='/register'>
         <Register />
       </Route>
-    </Switch>
-    </>
-  );
-} else {
-  return (
-    <>
+    <Route exact path='/user'>
     <UserHome />
-    <br />
-    <Switch>
+    </Route>
       <Route exact path='/home'>
         <UserHome />
       </Route>
@@ -51,16 +43,12 @@ const AppRoutes: React.FC<unknown> = (props) => {
       <Route path='/form'>
         <ReimbursementForm />
       </Route>
-      <Route path='/home'>
-        <Redirect to='/home' />
-      </Route>
       <Route path='/grades'>
         <FinalGradesPage />
       </Route>
     </Switch>
     </>
   )
-}
 }
 
 export default AppRoutes;

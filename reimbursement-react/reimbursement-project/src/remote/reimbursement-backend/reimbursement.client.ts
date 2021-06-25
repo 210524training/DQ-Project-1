@@ -1,8 +1,11 @@
 import axios from 'axios';
-import React, { useState } from 'react';
+
+import dotenv from 'dotenv';
+
+dotenv.config({});
 
 const reimbursementClient = axios.create({
-  baseURL: process.env.REACT_APP_ENVIRONMENT === 'local' ? 'http://localhost:4000' : process.env.REIMBURSEMENT_URL,
+  baseURL: process.env.REACT_APP_ENVIRONMENT === 'local' ? 'http://localhost:3000' : process.env.REIMBURSEMENT_URL,
   headers: {
     'Content-Type': 'application/json',
   },

@@ -14,16 +14,17 @@ export const sendLogin = async (username: string, password: string): Promise<Use
 }
 
 export const register = async ({username, password, role}: User): Promise<boolean> => {
-  const response = await reimbursementClient.post('/register', {
+  const response = await reimbursementClient.post('/api/v1/users/register', {
     username,
     password,
     role,
   });
 
   if(response) {
+    console.log(response)
     return true;
   }
-
+    console.log(response)
   return false;
 }
 
@@ -69,7 +70,7 @@ export const getByID= async (id: string): Promise<Reimbursement> => {
 
 //update amount
 export const updateProjectedAmount = async(reimbursement: Reimbursement ): Promise<boolean> => {
-  const response = await reimbursementClient.put('/api/v1/reimbursments/update', {reimbursement,});
+  const response = await reimbursementClient.put('/api/v1/reimbursements/update', {reimbursement,});
 
   if(response) {
     return true;
@@ -89,7 +90,7 @@ export const putAward = async(reimbursement: Reimbursement ): Promise<boolean> =
 
 
 export const accept = async(reimbursement: Reimbursement ): Promise<boolean> => {
-  const response = await reimbursementClient.put('/api/v1/reimbursments/accept', {reimbursement,});
+  const response = await reimbursementClient.put('/api/v1/reimbursements/accept', {reimbursement,});
 
   if(response) {
     return true;
@@ -99,7 +100,7 @@ export const accept = async(reimbursement: Reimbursement ): Promise<boolean> => 
 
 
 export const reject = async(reimbursement: Reimbursement): Promise<boolean> => {
-  const response = await reimbursementClient.put(`/api/v1/reimbursments/reject`, {reimbursement,});
+  const response = await reimbursementClient.put(`/api/v1/reimbursements/reject`, {reimbursement,});
 
   if(response) {
     return true;
@@ -108,7 +109,7 @@ export const reject = async(reimbursement: Reimbursement): Promise<boolean> => {
 }
 //benco head and super update 
 export const updateByRole = async(reimbursement: Reimbursement, role: string, ): Promise<boolean> => {
-  const response = await reimbursementClient.put(`/api/v1/reimbursments/accept/${role}`, {reimbursement,});
+  const response = await reimbursementClient.put(`/api/v1/reimbursements/accept/${role}`, {reimbursement,});
 
   if(response) {
     return true;

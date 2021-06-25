@@ -19,12 +19,6 @@ export class UserService {
     return this.dao.findByUsername(username);
   }
 
-  attemptRegister(user: User): Promise<boolean> {
-    return this.dao.attemptRegister(
-      new User(user.username, user.password, user.role),
-    );
-  }
-
   deleteUser(user: User): Promise<boolean> {
     return this.dao.deleteUser(user);
   }
@@ -44,7 +38,7 @@ export class UserService {
   }
 
   register(user: User): Promise<boolean> {
-    return this.attemptRegister(user);
+    return this.dao.attemptRegister(user);
   }
 
   // async addNotes(username: string): Promise<User | null> {

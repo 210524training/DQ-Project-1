@@ -2,6 +2,7 @@
   "name": "reimbursement-project",
   "version": "0.1.0",
   "private": true,
+  "proxy": "http://localhost:3001",
   "dependencies": {
     "@reduxjs/toolkit": "^1.6.0",
     "@syncfusion/ej2-react-calendars": "^19.1.66",

@@ -14,11 +14,8 @@ export class UserRepository {
     const params: DocumentClient.PutItemInput = {
       TableName: 'USERS-table',
       Item: {
-        role: user.role,
-        username: user.username,
-        password: user.password,
+        ...user,
       },
-      ConditionExpression: 'attribute_not_exists(username)',
     };
     try {
       const result = await this.docClient.put(params).promise();
@@ -53,7 +50,7 @@ export class UserRepository {
     if(data.Items) {
       return data.Items[0] as User;
     }
-
+    log.debug('Somn Wrooooooong');
     return null;
   }
 

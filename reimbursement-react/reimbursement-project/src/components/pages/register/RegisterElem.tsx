@@ -10,7 +10,6 @@ export const Container = styled.div`
     z-index: 0;
     overflow: hidden;
     background-color: #f4b400;
-    );
     `;
 
 export const FormWrap = styled.div`

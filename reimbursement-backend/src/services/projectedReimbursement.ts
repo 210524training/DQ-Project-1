@@ -1,7 +1,6 @@
 import Reimbursement from '../models/reimbursement';
 import reimbursementRepository from '../repositories/reimbursementRepo';
 import reimbursementService from './reimbursementService';
-import userService from './userService';
 
 function percentage(num: number, per: number) {
   return (num / 100) * per;
