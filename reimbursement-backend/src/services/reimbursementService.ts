@@ -18,6 +18,10 @@ export class ReimbursementService {
     return this.dao.getByUsername(username);
   }
 
+  getByID(id: string): Promise<Reimbursement | null> {
+    return this.dao.getById(id);
+  }
+
   async add(reimbursement: Reimbursement): Promise<boolean> {
     const result = await userService.awardAvailable(reimbursement.username);
     if(result) {

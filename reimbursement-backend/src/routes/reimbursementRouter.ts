@@ -1,7 +1,6 @@
 import express, {
   Router, Request, Response,
 } from 'express';
-import httpCodes from 'http-status-codes';
 import reimbursementService from '../services/reimbursementService';
 import log from '../log';
 import { conditionalUpdate, viewFinalGrade, conditionalView } from '../services/projectedReimbursement';
@@ -238,7 +237,15 @@ async function viewFinalSubmission(req: Request, res: Response): Promise<void> {
   );
 }
 
+async function getByID(req: Request, res: Response): Promise<void> {
+  const { id } = req.params;
+  res.json(
+    await reimbursementService.getByID(id),
+  );
+}
+
 reimbursementRouter.get('/:username/:role', getByRole);
+reimbursementRouter.get('/:id', getByID);
 reimbursementRouter.get('/:role', viewFinalSubmission);
 reimbursementRouter.post('/form/submit', postReimbursement);
 reimbursementRouter.put('/update', updateProjectedAmount);

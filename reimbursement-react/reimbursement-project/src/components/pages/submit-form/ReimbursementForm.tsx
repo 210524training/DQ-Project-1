@@ -19,7 +19,7 @@ const ReimbursementForm: React.FC<Props> = (props) => {
   const [type, setType] = useState<string>('');
   const [cost, setCost] = useState<number>(0);
   const [format, setFormat] = useState<string>('');
-
+  const [color, setColor] = useState<string>('');
 
   const dispatch = useAppDispatch();
   const history = useHistory();
@@ -49,6 +49,16 @@ const ReimbursementForm: React.FC<Props> = (props) => {
     } else return false;
   }
 
+  function markUrgent() {
+    let today = Date.parse(fileDate);
+    let stringToDate = new Date(fileDate)
+    let twoWeeksFromNow = new Date(stringToDate.getFullYear(), stringToDate.getMonth(), stringToDate.getDate() + 14);
+    let twoWeeksParsed = Date.parse(twoWeeksFromNow.toString());
+    if ((twoWeeksParsed - today) >= 1209600000) {
+      return false
+    } else return true;
+  }
+
   const handleLocationChange = (e: ChangeEvent<HTMLInputElement>) => {
     setLocation(e.target.value);
   }
@@ -73,8 +83,12 @@ const ReimbursementForm: React.FC<Props> = (props) => {
     if (weekFromNow()) {
       //add reimbursement
       const newReimbursement = new Reimbursement(uuidv4(), username, startDate, location, fileDate, type, cost, 'Pending Supervisor', format, 0, 0)
+      if(markUrgent()) {
+        setColor('red')
+      }
       addReimbursement(newReimbursement);
       alert('reimbursement application submitted');
+      
       history.push('/services')
     } else throw new Error('start date must be at least 7 days from file date');
     return
@@ -84,7 +98,7 @@ const ReimbursementForm: React.FC<Props> = (props) => {
     <>
         <Container>
             <FormWrap>
-                <Icon to="/home/:user">Reimbursements-R-Us</Icon>
+                <Icon to="/home">Reimbursements-R-Us</Icon>
                 <FormContent>
                     <Form onSubmit={handleFormSubmit}>
                         <FormH1>Reimbursement Application</FormH1>

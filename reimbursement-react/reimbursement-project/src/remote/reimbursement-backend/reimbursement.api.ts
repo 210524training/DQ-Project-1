@@ -53,12 +53,17 @@ export const addReimbursement = async ({id, username, startDate, location, fileD
 }
 
 //delete reimbursement
-export const deleteReimbursement = async (id: number, username: string) => {
+export const deleteReimbursement = async (id: string, username: string) => {
   const { data } = await reimbursementClient.delete<boolean>(`/api/v1/reimbursements/${id}/${username}`)
 }
 //get pending reimbursement
 export const getByRole = async ( role: string, username: string,): Promise<Reimbursement[]> => {
   const { data } = await reimbursementClient.get<Reimbursement[]>(`/api/v1/reimbursements/${username}/${role}`);
+  return data
+}
+
+export const getByID= async (id: string): Promise<Reimbursement> => {
+  const { data } = await reimbursementClient.get<Reimbursement>(`/api/v1/reimbursements/${id}`);
   return data
 }
 

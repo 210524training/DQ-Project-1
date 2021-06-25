@@ -11,7 +11,7 @@ const UserNav = () => {
         <>
             <Nav>
                 <NavbarContainer>
-                    <NavLogo to='/'>Reimbursements-R-Us</NavLogo>
+                    <NavLogo to='/home'>Reimbursements-R-Us</NavLogo>
                     <MobileIcon >
                         <FaBars />
                     </MobileIcon>
