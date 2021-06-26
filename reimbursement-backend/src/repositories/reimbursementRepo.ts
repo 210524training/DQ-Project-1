@@ -8,17 +8,21 @@ export class ReimbursementRepository {
 
   async addReimbursement(reimbursement: Reimbursement): Promise<boolean> {
     const params: DocumentClient.PutItemInput = {
-      TableName: 'Reimbursements',
-      Item: reimbursement,
+      TableName: 'r-table',
+      Item: {
+        ...reimbursement,
+      },
       ReturnConsumedCapacity: 'TOTAL',
     };
 
     try {
       const result = await this.docClient.put(params).promise();
 
+      log.info('successsss');
       log.info(result);
       return true;
     } catch(error) {
+      log.debug('add reimbursement repo fail');
       log.debug(error);
       return false;
     }
@@ -26,7 +30,7 @@ export class ReimbursementRepository {
 
   async updateProjectedAmount(reimbursement: Reimbursement): Promise<boolean> {
     const params: DocumentClient.UpdateItemInput = {
-      TableName: 'Reimbursements',
+      TableName: 'r-table',
       Key: {
         username: reimbursement.username,
         id: reimbursement.id,
@@ -53,7 +57,7 @@ export class ReimbursementRepository {
 
   async deleteReimbursement(id: string, username: string): Promise<boolean> {
     const params: DocumentClient.DeleteItemInput = {
-      TableName: 'Reimbursements',
+      TableName: 'r-table',
       Key: {
         username,
         id,
@@ -73,7 +77,7 @@ export class ReimbursementRepository {
 
   async rejectReimbursement(reimbursement: Reimbursement): Promise<boolean> {
     const params: DocumentClient.UpdateItemInput = {
-      TableName: 'Reimbursements',
+      TableName: 'r-table',
       Key: {
         username: reimbursement.username,
         id: reimbursement.id,
@@ -102,7 +106,7 @@ export class ReimbursementRepository {
 
   async getByUsername(username: string): Promise<Reimbursement[]> {
     const params: DocumentClient.ScanInput = {
-      TableName: 'Reimbursements',
+      TableName: 'r-table',
 
       ProjectionExpression: '#id, #u, #sd, #l, #fd, #t, #c #s, #gf, #pr, #a',
       ExpressionAttributeNames: {
@@ -131,30 +135,25 @@ export class ReimbursementRepository {
     return [];
   }
 
-  async getById(id: string): Promise<Reimbursement | null> {
-    const params: DocumentClient.ScanInput = {
-      TableName: 'Reimbursements',
+  async getById(id: string, username: string): Promise<Reimbursement | null> {
+    const params: DocumentClient.QueryInput = {
+      TableName: 'r-table',
 
-      ProjectionExpression: '#id, #u, #sd, #l, #fd, #t, #c #s, #gf, #pr',
+      ExpressionAttributeValues: {
+        ':i': id,
+        ':user': username,
+      },
       ExpressionAttributeNames: {
         '#id': 'id',
         '#u': 'username',
-        '#sd': 'start date',
-        '#l': 'location',
-        '#fd': 'file date',
-        '#t': 'type',
-        '#c': 'cost',
-        '#s': 'status',
-        '#gf': 'grading format',
-        '#pr': 'projected reimbursement',
       },
-      ExpressionAttributeValues: { ':i': id },
-      FilterExpression: '#id = :i',
+      KeyConditionExpression: '#u = :user AND #id = :i',
     };
 
-    const data = await this.docClient.scan(params).promise();
+    const data = await this.docClient.query(params).promise();
 
     if(data.Items) {
+      console.log(data.Items);
       return data.Items[0] as Reimbursement;
     }
     console.log('wrong');
@@ -163,7 +162,7 @@ export class ReimbursementRepository {
 
   async getAll(): Promise<Reimbursement[]> {
     const params: DocumentClient.ScanInput = {
-      TableName: 'Reimbursements',
+      TableName: 'r-table',
     };
 
     const data = await this.docClient.scan(params).promise();
@@ -176,9 +175,8 @@ export class ReimbursementRepository {
   }
 
   async supervisorView(): Promise<Reimbursement[]> {
-    const params: DocumentClient.QueryInput = {
-      TableName: 'Reimbursements',
-      IndexName: 'status-index',
+    const params: DocumentClient.ScanInput = {
+      TableName: 'r-table',
       ExpressionAttributeNames: {
         '#s': 'status',
       },
@@ -186,7 +184,7 @@ export class ReimbursementRepository {
       FilterExpression: '#s = :rs',
     };
 
-    const data = await this.docClient.query(params).promise();
+    const data = await this.docClient.scan(params).promise();
 
     if(data.Items) {
       return data.Items as Reimbursement[];
@@ -196,9 +194,8 @@ export class ReimbursementRepository {
   }
 
   async headView(): Promise<Reimbursement[]> {
-    const params: DocumentClient.QueryInput = {
-      TableName: 'Reimbursements',
-      IndexName: 'status-index',
+    const params: DocumentClient.ScanInput = {
+      TableName: 'r-table',
       ExpressionAttributeNames: {
         '#s': 'status',
       },
@@ -206,7 +203,7 @@ export class ReimbursementRepository {
       FilterExpression: '#s = :rs',
     };
 
-    const data = await this.docClient.query(params).promise();
+    const data = await this.docClient.scan(params).promise();
 
     if(data.Items) {
       return data.Items as Reimbursement[];
@@ -216,9 +213,8 @@ export class ReimbursementRepository {
   }
 
   async bencoView(): Promise<Reimbursement[]> {
-    const params: DocumentClient.QueryInput = {
-      TableName: 'Reimbursements',
-      IndexName: 'status-index',
+    const params: DocumentClient.ScanInput = {
+      TableName: 'r-table',
       ExpressionAttributeNames: {
         '#s': 'status',
       },
@@ -226,7 +222,7 @@ export class ReimbursementRepository {
       FilterExpression: '#s = :rs',
     };
 
-    const data = await this.docClient.query(params).promise();
+    const data = await this.docClient.scan(params).promise();
 
     if(data.Items) {
       return data.Items as Reimbursement[];
@@ -236,9 +232,8 @@ export class ReimbursementRepository {
   }
 
   async viewPending(): Promise<Reimbursement[]> {
-    const params: DocumentClient.QueryInput = {
-      TableName: 'Reimbursements',
-      IndexName: 'status-index',
+    const params: DocumentClient.ScanInput = {
+      TableName: 'r-table',
       ExpressionAttributeNames: {
         '#s': 'status',
       },
@@ -246,7 +241,7 @@ export class ReimbursementRepository {
       FilterExpression: '#s = :rs',
     };
 
-    const data = await this.docClient.query(params).promise();
+    const data = await this.docClient.scan(params).promise();
 
     if(data.Items) {
       return data.Items as Reimbursement[];
@@ -256,18 +251,17 @@ export class ReimbursementRepository {
   }
 
   async viewGrade(): Promise<Reimbursement[]> {
-    const params: DocumentClient.QueryInput = {
-      TableName: 'Reimbursements',
-      IndexName: 'format-index',
+    const params: DocumentClient.ScanInput = {
+      TableName: 'r-table',
       ExpressionAttributeNames: {
-        '#gf': 'grading format',
+        '#gf': 'format',
         '#s': 'status',
       },
       ExpressionAttributeValues: { ':f': 'Letter Grade', ':st': 'Pending' },
       FilterExpression: '#gf = :f AND #s = :st',
     };
 
-    const data = await this.docClient.query(params).promise();
+    const data = await this.docClient.scan(params).promise();
 
     if(data.Items) {
       return data.Items as Reimbursement[];
@@ -277,18 +271,17 @@ export class ReimbursementRepository {
   }
 
   async viewPresentation(): Promise<Reimbursement[]> {
-    const params: DocumentClient.QueryInput = {
-      TableName: 'Reimbursements',
-      IndexName: 'format-index',
+    const params: DocumentClient.ScanInput = {
+      TableName: 'r-table',
       ExpressionAttributeNames: {
-        '#gf': 'grading format',
+        '#gf': 'format',
         '#s': 'status',
       },
       ExpressionAttributeValues: { ':f': 'Presentation', ':st': 'Pending' },
       FilterExpression: '#gf = :f AND #s = :st',
     };
 
-    const data = await this.docClient.query(params).promise();
+    const data = await this.docClient.scan(params).promise();
 
     if(data.Items) {
       return data.Items as Reimbursement[];
@@ -300,7 +293,7 @@ export class ReimbursementRepository {
   // Benco
   async acceptReimbursement(reimbursement: Reimbursement): Promise<boolean> {
     const params: DocumentClient.UpdateItemInput = {
-      TableName: 'Reimbursements',
+      TableName: 'r-table',
       Key: {
         username: reimbursement.username,
         id: reimbursement.id,
@@ -330,7 +323,7 @@ export class ReimbursementRepository {
   // Benco
   async setPendingGrade(reimbursement: Reimbursement): Promise<boolean> {
     const params: DocumentClient.UpdateItemInput = {
-      TableName: 'Reimbursements',
+      TableName: 'r-table',
       Key: {
         username: reimbursement.username,
         id: reimbursement.id,
@@ -360,7 +353,7 @@ export class ReimbursementRepository {
   // DepHead
   async setToPendingBenco(reimbursement: Reimbursement): Promise<boolean> {
     const params: DocumentClient.UpdateItemInput = {
-      TableName: 'Reimbursements',
+      TableName: 'r-table',
       Key: {
         username: reimbursement.username,
         id: reimbursement.id,
@@ -388,7 +381,7 @@ export class ReimbursementRepository {
   // directSupervisor
   async setToPendingHead(reimbursement: Reimbursement): Promise<boolean> {
     const params: DocumentClient.UpdateItemInput = {
-      TableName: 'Reimbursements',
+      TableName: 'r-table',
       Key: {
         username: reimbursement.username,
         id: reimbursement.id,

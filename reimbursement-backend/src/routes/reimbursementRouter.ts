@@ -1,192 +1,53 @@
-import express, {
+import {
   Router, Request, Response,
 } from 'express';
 import reimbursementService from '../services/reimbursementService';
 import log from '../log';
 import { conditionalUpdate, viewFinalGrade, conditionalView } from '../services/projectedReimbursement';
+import Reimbursement from '../models/reimbursement';
+import User from '../models/user';
+import userService from '../services/userService';
 
 const reimbursementRouter = Router();
 
-// reimbursementRouter.get('/', async (req, res) => {
-//   if(!req.session.isLoggedIn || !req.session.user) {
-//     throw new Error('you must be logged in to access this feature');
-//   }
-//   const result = await reimbursementService.getAll();
-//   res.status(httpCodes.OK).json(result);
-// });
+// async function getByRole(req: Request, res: Response): Promise<void> {
+//   log.info('Request to fetch claims by role');
 
-// reimbursementRouter.post('/:username/:role', async (req, res) => {
 //   const { username, role } = req.params;
 
-//   if(role === 'Employee') {
-//     const userTable = await reimbursementService.getByUsername(username);
-//     res.status(httpCodes.OK).json(userTable);
-//   } else if(role === 'Supervisor') {
-//     const supTable = await reimbursementService.supervisorView();
-//     res.status(httpCodes.OK).json(supTable);
-//   } else if(role === 'Department Head') {
-//     const headTable = await reimbursementService.headView();
-//     res.status(httpCodes.OK).json(headTable);
-//   } else if(role === 'Benco') {
-//     const bencoTable = await reimbursementService.bencoView();
-//     res.status(httpCodes.OK).json(bencoTable);
-//   } else {
-//     res.status(httpCodes.BAD_REQUEST).send();
-//   }
-// });
-
-// reimbursementRouter.put('/:role', async (req, res) => {
-//   if(!req.session.isLoggedIn || !req.session.user) {
-//     throw new Error('you must be logged in to access this feature');
-//   }
-//   const { role } = req.params;
-//   if(role === 'Supervisor') {
-//     const supUpdate = await reimbursementService.supervisorUpdate(req.body);
-//     res.status(httpCodes.OK).json(supUpdate);
-//   } else if(role === 'Department Head') {
-//     const headUpdate = await reimbursementService.headUpdate(req.body);
-//     res.status(httpCodes.OK).json(headUpdate);
-//   } else if(role === 'Benco') {
-//     const bencoUpdate = await reimbursementService.bencoUpdate(req.body);
-//     res.status(httpCodes.OK).json(bencoUpdate);
-//   } else {
-//     res.status(httpCodes.BAD_REQUEST).send();
-//   }
-// });
-
-// reimbursementRouter.put('/', async (req, res) => {
-//   const result = await reimbursementService.update(req.body);
-//   if(result) {
-//     res.status(httpCodes.OK).json(result);
-//   } else {
-//     res.status(httpCodes.BAD_REQUEST).json(result);
-//   }
-// });
-
-// reimbursementRouter.post('/', async (req, res) => {
-//   const result = await reimbursementService.add(req.body);
-//   if(result) {
-//     res.status(httpCodes.OK).json(result);
-//   } else {
-//     res.status(httpCodes.BAD_REQUEST).json(result);
-//   }
-// });
-
-// reimbursementRouter.put('/', async (req, res) => {
-//   const result = await reimbursementService.reject(req.body);
-//   if(result) {
-//     res.status(httpCodes.OK).json(result);
-//   } else {
-//     res.status(httpCodes.BAD_REQUEST).json(result);
-//   }
-// });
-
-// reimbursementRouter.put('/', async (req, res) => {
-//   const result = await reimbursementService.accept(req.body);
-//   if(result) {
-//     res.status(httpCodes.OK).json(result);
-//   } else {
-//     res.status(httpCodes.BAD_REQUEST).json(result);
-//   }
-// });
-
-// reimbursementRouter.delete('/:username/:id', async (req, res) => {
-//   const { id, username } = req.params;
-
-//   if(!id) {
-//     throw new Error('no claim matches id');
-//   }
-
-//   const result = await reimbursementService.delete(id, username);
-
-//   if(result) {
-//     res.status(httpCodes.OK).json(result);
-//   } else {
-//     res.status(httpCodes.BAD_REQUEST).json(result);
-//   }
-// });
-
-// reimbursementRouter.get('/reimbursements/benco', async (req, res) => {
-//   const result = await reimbursementService.viewGrade();
-//   res.status(httpCodes.OK).json(result);
-// });
-
-// reimbursementRouter.get('/reimbursements/role', async (req, res) => {
-//   const result = await reimbursementService.viewPresentation();
-//   res.status(httpCodes.OK).json(result);
-// });
-
-// reimbursementRouter.get('/reimbursements/:username', async (req, res) => {
-//   const { username } = req.params;
-
-//   const result = await reimbursementService.getByUsername(username);
-//   res.status(httpCodes.OK).json(result);
-// });
-
-// export default reimbursementRouter;
-
-// const claimRouter = Router();
-
-// async function getAllClaims(req: Request, res: Response): Promise<void> {
-//   log.info('Request to fetch all claims');
-
-//   if(!req.session.isLoggedIn || !req.session.user) {
-//     throw new AuthenticationError();
-//   }
-
 //   res.json(
-//     await claimService.getAll(),
+//     await conditionalView(role, username),
 //   );
 // }
 
-// async function getByUsername(req: Request, res: Response): Promise<void> {
-//   log.info('Request to fetch a claim');
-
-//   const { username } = req.params;
-
-//   res.json(
-//     await reimbursementService.getByUsername(username),
-//   );
-// }
-
-async function getByRole(req: Request, res: Response): Promise<void> {
-  log.info('Request to fetch claims by role');
-
-  const { username, role } = req.params;
-
-  res.json(
-    await conditionalView(role, username),
-  );
-}
-
-async function postReimbursement(req: Request, res: Response): Promise<void> {
-  log.info('Request to create a claim');
-
-  const { claim } = req.body;
-
-  const result = await reimbursementService.add(claim);
+// eslint-disable-next-line max-len
+export async function postReimbursement(req: Request<unknown, unknown, Reimbursement, object>, res: Response): Promise<void> {
+  const reimbursement = req.body;
+  console.log(reimbursement);
+  const result = await reimbursementService.add(reimbursement);
   if(!result) {
     res.status(500);
   } else {
     res.status(201).send();
   }
 }
+// eslint-disable-next-line max-len
+// has get by id
+// async function updateProjectedAmount(req: Request, res: Response): Promise<void> {
+//   log.info('Request to update a claim');
 
-async function updateProjectedAmount(req: Request, res: Response): Promise<void> {
-  log.info('Request to update a claim');
+//   const reimbursement = req.body;
 
-  const { reimbursement } = req.body;
-
-  const result = await reimbursementService.update(reimbursement);
-  if(!result) {
-    res.status(500);
-  } else {
-    res.status(202);
-  }
-}
+//   const result = await reimbursementService.update(reimbursement);
+//   if(!result) {
+//     res.status(500);
+//   } else {
+//     res.status(202);
+//   }
+// }
 
 async function acceptReimbursement(req: Request, res: Response): Promise<void> {
-  const { reimbursement } = req.body;
+  const reimbursement = req.body;
 
   const result = await reimbursementService.accept(reimbursement);
   if(!result) {
@@ -197,9 +58,42 @@ async function acceptReimbursement(req: Request, res: Response): Promise<void> {
 }
 
 async function rejectReimbursement(req: Request, res: Response): Promise<void> {
-  const { reimbursement } = req.body;
+  const reimbursement = req.body;
 
   const result = await reimbursementService.reject(reimbursement);
+  if(!result) {
+    res.status(500);
+  } else {
+    res.status(202);
+  }
+}
+// just need username and id for these updates
+async function bencoUpdate(req: Request, res: Response): Promise<void> {
+  const reimbursement = req.body;
+
+  const result = await reimbursementService.bencoUpdate(reimbursement);
+  if(!result) {
+    res.status(500);
+  } else {
+    res.status(202);
+  }
+}
+
+async function headUpdate(req: Request, res: Response): Promise<void> {
+  const reimbursement = req.body;
+
+  const result = await reimbursementService.headUpdate(reimbursement);
+  if(!result) {
+    res.status(500);
+  } else {
+    res.status(202);
+  }
+}
+
+async function supervisorUpdate(req: Request, res: Response): Promise<void> {
+  const reimbursement = req.body;
+
+  const result = await reimbursementService.supervisorUpdate(reimbursement);
   if(!result) {
     res.status(500);
   } else {
@@ -220,38 +114,98 @@ async function deleteClaim(req: Request, res: Response): Promise<void> {
   }
 }
 
-async function updateByRole(req: Request, res: Response): Promise<void> {
-  const { role } = req.params;
-  const { reimbursement } = req.body;
+// async function updateByRole(req: Request, res: Response): Promise<void> {
+//   const { role } = req.params;
+//   const reimbursement = req.body;
 
-  res.json(
-    await conditionalUpdate(reimbursement, role),
-  );
+//   res.json(
+//     await conditionalUpdate(reimbursement, role),
+//   );
+// }
+
+export async function putAward(req: Request, res: Response): Promise<void> {
+  log.info('Request to post amount awarded');
+  const reimbursement = req.body;
+
+  const result = await userService.updateAward(reimbursement);
+  if(!result) {
+    res.status(500);
+  } else {
+    res.status(201);
+  }
 }
 
-async function viewFinalSubmission(req: Request, res: Response): Promise<void> {
-  const { role } = req.params;
+// async function viewFinalSubmission(req: Request, res: Response): Promise<void> {
+//   const { role } = req.params;
 
-  res.json(
-    await viewFinalGrade(role),
-  );
-}
+//   res.json(
+//     await viewFinalGrade(role),
+//   );
+// }
 
 async function getByID(req: Request, res: Response): Promise<void> {
-  const { id } = req.params;
+  const { id, username } = req.params;
   res.json(
-    await reimbursementService.getByID(id),
+    await reimbursementService.getByID(id, username),
+  );
+}
+async function getByUsername(req: Request, res: Response): Promise<void> {
+  const { username } = req.params;
+  res.json(
+    await reimbursementService.getByUsername(username),
   );
 }
 
-reimbursementRouter.get('/:username/:role', getByRole);
-reimbursementRouter.get('/:id', getByID);
-reimbursementRouter.get('/:role', viewFinalSubmission);
+async function supervisorView(req: Request, res: Response): Promise<void> {
+  res.json(
+    await reimbursementService.supervisorView(),
+  );
+}
+
+async function headView(req: Request, res: Response): Promise<void> {
+  res.json(
+    await reimbursementService.headView(),
+  );
+}
+
+async function bencoView(req: Request, res: Response): Promise<void> {
+  res.json(
+    await reimbursementService.bencoView(),
+  );
+}
+
+async function viewGrade(req: Request, res: Response): Promise<void> {
+  res.json(
+    await reimbursementService.viewGrade(),
+  );
+}
+
+async function viewPresentation(req: Request, res: Response): Promise<void> {
+  res.json(
+    await reimbursementService.viewPresentation(),
+  );
+}
+
+// reimbursementRouter.get('/:username/:role', getByRole);
+reimbursementRouter.get('/:id/:username', getByID);
+// reimbursementRouter.get('/:role', viewFinalSubmission);
+reimbursementRouter.get('/pending/supervisor', supervisorView);
+reimbursementRouter.get('/pending/head', headView);
+reimbursementRouter.get('/pending/benco', bencoView);
+reimbursementRouter.get('/pending/approval/benco', viewGrade);
+reimbursementRouter.get('/pending/approval/supervisor', viewPresentation);
+reimbursementRouter.get('/username', getByUsername);
+
 reimbursementRouter.post('/form/submit', postReimbursement);
-reimbursementRouter.put('/update', updateProjectedAmount);
+
+// ALL WORKING
+// reimbursementRouter.put('/update', updateProjectedAmount);
 reimbursementRouter.put('/accept', acceptReimbursement);
 reimbursementRouter.put('/reject', rejectReimbursement);
-reimbursementRouter.put('/accept/:role', updateByRole);
+reimbursementRouter.put('/accept/benco', bencoUpdate);
+reimbursementRouter.put('/accept/supervisor', supervisorUpdate);
+reimbursementRouter.put('/accept/head', headUpdate);
+
 reimbursementRouter.delete('/:id/:username', deleteClaim);
 
 export default reimbursementRouter;

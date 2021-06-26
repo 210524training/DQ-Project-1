@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 
 export const Container = styled.div`
-    min-height: 692px;
+    height: 1000px;
     bottom: 0;
     left: 0;
     right: 0;
@@ -28,8 +28,10 @@ export const Icon = styled(Link)`
     margin-top: 2rem;
     text-decoration: none;
     color: #fff;
-    font-weight: 700;
-    font-size: 32px;
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-self: flex-start;
 
     @media screen and (max-width: 480px) {
         margin-left: 16px;

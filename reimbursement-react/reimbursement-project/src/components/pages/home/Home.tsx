@@ -7,7 +7,6 @@ import UserNav from '../../navbar/UserNav';
 
 
 const Home = () => {
-    const user = useAppSelector<UserState>(selectUser);
         return (
             <> 
                 <Navbar />

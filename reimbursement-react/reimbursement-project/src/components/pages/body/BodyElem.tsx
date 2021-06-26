@@ -2,12 +2,12 @@ import styled from 'styled-components';
 import { Link as LinkRouter } from 'react-router-dom'
 
 export const BodyContainer = styled.div`
-    background: #0c0c0c;
+    background: #000;
     display: flex;
     justify-content: center;
     align-items: center;
     padding: 0 30px;
-    height: 800px;
+    height: 900px;
     position: relative;
     z-index: 1
     `

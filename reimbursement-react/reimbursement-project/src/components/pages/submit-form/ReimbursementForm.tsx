@@ -1,96 +1,111 @@
 import React, { ChangeEvent, FormEvent, useEffect, useState } from 'react';
 import Reimbursement from '../../../models/reimbursement';
-import { useAppDispatch } from '../../../hook';
+import { useAppDispatch, useAppSelector } from '../../../hook';
 import { useHistory } from 'react-router-dom';
 import { FormOption, FormSelect, Container, Form, FormButton, FormContent, FormH1, FormInput, FormLabel, FormWrap, Icon} from './FormOptionsElem';
 import { addReimbursement } from '../../../remote/reimbursement-backend/reimbursement.api';
 import { v4 as uuidv4 } from 'uuid'
+import { selectUser, UserState } from '../../../slices/user.slice';
+import Home from '../home/Home';
 
 type Props = {
   reimbursement?: Reimbursement
 }
 
-const ReimbursementForm: React.FC<Props> = (props) => {
+const ReimbursementForm = () => {
 
+  const user = useAppSelector<UserState>(selectUser);
   const [username, setUsername] = useState<string>('');
   const [fileDate, setFileDate] = useState<string>('');
   const [startDate, setStartDate] = useState<string>('');
   const [location, setLocation] = useState<string>('');
   const [type, setType] = useState<string>('');
-  const [cost, setCost] = useState<number>(0);
+  const [cost, setCost] = useState<string>('0');
   const [format, setFormat] = useState<string>('');
   const [color, setColor] = useState<string>('');
 
   const dispatch = useAppDispatch();
   const history = useHistory();
 
-
-  const handleUsernameChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setUsername(e.target.value);
-  }
-
-  const handleFileDateChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setFileDate(e.target.value);
-    console.log(new Date(e.target.value));
-  }
-
-  const handleStartDateChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setStartDate(e.target.value);
-    console.log(new Date(e.target.value));
-  }
-
   function weekFromNow() {
+    console.log(fileDate)
     let today = Date.parse(fileDate);
-    let stringToDate = new Date(fileDate)
+    let stringToDate = new Date(fileDate);
     let nextweek = new Date(stringToDate.getFullYear(), stringToDate.getMonth(), stringToDate.getDate() + 7);
     let nextweekParsed = Date.parse(nextweek.toString());
-    if ((nextweekParsed - today) >= 604800000) {
+    const start = Date.parse(startDate)
+    const weekdifference = nextweekParsed - today;
+    const difference = start - today;
+    if (difference >= weekdifference) {
+      console.log('it is at least a week from now')
       return true
-    } else return false;
+  } else {console.log('not a week from today');
+     return false;
   }
+}
 
-  function markUrgent() {
-    let today = Date.parse(fileDate);
-    let stringToDate = new Date(fileDate)
-    let twoWeeksFromNow = new Date(stringToDate.getFullYear(), stringToDate.getMonth(), stringToDate.getDate() + 14);
-    let twoWeeksParsed = Date.parse(twoWeeksFromNow.toString());
-    if ((twoWeeksParsed - today) >= 1209600000) {
-      return false
-    } else return true;
-  }
+function markUrgent() {
+  let today = Date.parse(fileDate);
+  let stringToDate = new Date(fileDate)
+  let twoWeeksFromNow = new Date(stringToDate.getFullYear(), stringToDate.getMonth(), stringToDate.getDate() + 14);
+  let twoWeeksParsed = Date.parse(twoWeeksFromNow.toString());
+  if ((twoWeeksParsed - today) >= 1209600000) {
+    console.log()
+    return false
+  } else return true;
+}
 
-  const handleLocationChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setLocation(e.target.value);
-  }
+const handleUsernameChange = (e: ChangeEvent<HTMLInputElement>) => {
+  setUsername(e.target.value);
+}
 
-  const handleTypeChange = (e: ChangeEvent<HTMLSelectElement>) => {
-    const eventType: string = e.target.value;
-    setType(eventType);
-  }
+const handleFileDateChange = (e: ChangeEvent<HTMLInputElement>) => {
+  setFileDate(e.target.value);
+}
 
-  const handleFormatChange = (e: ChangeEvent<HTMLSelectElement>) => {
-    const gradeFormat: string = e.target.value;
-    setFormat(gradeFormat);
-  }
+const handleStartDateChange = (e: ChangeEvent<HTMLInputElement>) => {
+  setStartDate(e.target.value);
+}
 
-  const handleCostChange = (e: ChangeEvent<HTMLInputElement>) => {
-      setCost(Number(e.target.value));
-  }
+const handleLocationChange = (e: ChangeEvent<HTMLInputElement>) => {
+  setLocation(e.target.value);
+}
 
+const handleTypeChange = (e: ChangeEvent<HTMLSelectElement>) => {
+  const eventType: string = e.target.value;
+  setType(eventType);
+}
 
-  const handleFormSubmit = async (e: FormEvent<HTMLFormElement>) => {
+const handleFormatChange = (e: ChangeEvent<HTMLSelectElement>) => {
+  const gradeFormat: string = e.target.value;
+  setFormat(gradeFormat);
+}
+
+const handleCostChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setCost((e.target.value));
+}
+
+  
+  if(user) {const handleFormSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    
     if (weekFromNow()) {
-      //add reimbursement
-      const newReimbursement = new Reimbursement(uuidv4(), username, startDate, location, fileDate, type, cost, 'Pending Supervisor', format, 0, 0)
-      if(markUrgent()) {
-        setColor('red')
+      //award available
+      const amount = user.amountAwarded;
+      console.log(amount)
+      if(amount >= 1000) {
+        alert('you have reached your max benefit amount');
+        history.push('/');
+      } else {
+        const newReimbursement = new Reimbursement(uuidv4(), user.username, startDate, location, fileDate, type, cost, 'Pending Supervisor', format, 0, 0);
+        console.log(newReimbursement);
+        addReimbursement(newReimbursement);
+        alert('reimbursement application submitted');
       }
-      addReimbursement(newReimbursement);
-      alert('reimbursement application submitted');
+      
       
       history.push('/services')
-    } else throw new Error('start date must be at least 7 days from file date');
+    } else alert('start date must be at least 7 days from file date')
     return
   }
 
@@ -103,7 +118,7 @@ const ReimbursementForm: React.FC<Props> = (props) => {
                     <Form onSubmit={handleFormSubmit}>
                         <FormH1>Reimbursement Application</FormH1>
                         <FormLabel htmlFor='username'>Username</FormLabel>
-                        <FormInput type='text' required onChange={handleUsernameChange}/>
+                        {(user)? (<FormInput type='text' name={user.username} value={user.username} readOnly/>) : (<FormInput type="text" required />)}
                         <FormLabel htmlFor='location'>Location</FormLabel>
                         <FormInput type='text' required onChange={handleLocationChange}/>
                         <FormLabel htmlFor='amount'>Amount</FormLabel>
@@ -131,6 +146,8 @@ const ReimbursementForm: React.FC<Props> = (props) => {
             </FormWrap>
         </Container>
     </>
+)} else return (
+  <Home />
 )
 }
 

@@ -29,21 +29,19 @@ export const register = async ({username, password, role}: User): Promise<boolea
 }
 
 //add reimbursement 
-export const addReimbursement = async ({id, username, startDate, location, fileDate, type, cost, status, format, projectedReimbursement, amountAwarded}: Reimbursement): Promise<boolean> => {
+export const addReimbursement = async ({ id, username, startDate, location, fileDate, type, cost, status, format, projectedReimbursement, amountAwarded}: Reimbursement): Promise<boolean> => {
   const response = await reimbursementClient.post('/api/v1/reimbursements/form/submit', {
-    Reimbursement: {
-      id: uuidv4(), 
+      id, 
       username,
       startDate,
       location,
       fileDate,
       type,
       cost,
-      status: 'Pending Supervisor', 
+      status, 
       format,
-      projectedReimbursement: 0,
-      amountAwarded: 0,
-}
+      projectedReimbursement,
+      amountAwarded,
   })
 
   if (response) { 
@@ -57,14 +55,15 @@ export const addReimbursement = async ({id, username, startDate, location, fileD
 export const deleteReimbursement = async (id: string, username: string) => {
   const { data } = await reimbursementClient.delete<boolean>(`/api/v1/reimbursements/${id}/${username}`)
 }
+
 //get pending reimbursement
 export const getByRole = async ( role: string, username: string,): Promise<Reimbursement[]> => {
-  const { data } = await reimbursementClient.get<Reimbursement[]>(`/api/v1/reimbursements/${username}/${role}`);
+  const {data} = await reimbursementClient.get<Reimbursement[]>(`/api/v1/reimbursements/${username}/${role}`);
   return data
 }
 
 export const getByID= async (id: string): Promise<Reimbursement> => {
-  const { data } = await reimbursementClient.get<Reimbursement>(`/api/v1/reimbursements/${id}`);
+  const  {data}  = await reimbursementClient.get<Reimbursement>(`/api/v1/reimbursements/${id}`);
   return data
 }
 
@@ -108,18 +107,61 @@ export const reject = async(reimbursement: Reimbursement): Promise<boolean> => {
   return false;
 }
 //benco head and super update 
-export const updateByRole = async(reimbursement: Reimbursement, role: string, ): Promise<boolean> => {
-  const response = await reimbursementClient.put(`/api/v1/reimbursements/accept/${role}`, {reimbursement,});
+// export const updateByRole = async(reimbursement: Reimbursement, role: string, ): Promise<boolean> => {
+//   const response = await reimbursementClient.put(`/api/v1/reimbursements/accept/${role}`, {reimbursement,});
 
-  if(response) {
-    return true;
-  }
-  return false;
-}
+//   if(response) {
+//     return true;
+//   }
+//   return false;
+// }
 
 
 //view presentation
 export const viewFinalSubmission = async (role: string): Promise<Reimbursement[]> => {
   const { data } = await reimbursementClient.get<Reimbursement[]>(`/api/v1/reimbursements/${role}`);
   return data
+}
+
+//conditionalviews
+export const supervisorView = async (): Promise<Reimbursement[]> => {
+  const {data} = await reimbursementClient.get<Reimbursement[]>(`/api/v1/reimbursements`)
+  return data;
+}
+
+export const headView = async (): Promise<Reimbursement[]> => {
+  const {data} = await reimbursementClient.get<Reimbursement[]>(`/api/v1/reimbursements`)
+  return data;
+}
+
+export const bencoView = async (): Promise<Reimbursement[]> => {
+  const {data} = await reimbursementClient.get<Reimbursement[]>(`/api/v1/reimbursements`)
+  return data
+}
+
+export const getByUsername = async (): Promise<Reimbursement[]> => {
+  const {data} = await reimbursementClient.get<Reimbursement[]>(`/api/v1/reimbursements`)
+  return data
+}
+
+//conditionalupdates
+export const bencoUpdate = async(reimbursement: Reimbursement): Promise<boolean> => {
+  const response = await reimbursementClient.put(`/api/v1/reimbursements`)
+  if (response) {
+    return true
+  } return false
+}
+
+export const headUpdate = async(reimbursement: Reimbursement): Promise<boolean> => {
+  const response = await reimbursementClient.put(`/api/v1/reimbursements`)
+  if (response) {
+    return true
+  } return false
+}
+
+export const supervisorUpdate = async(reimbursement: Reimbursement): Promise<boolean> => {
+  const response = await reimbursementClient.put(`/api/v1/reimbursements`)
+  if (response) {
+    return true
+  } return false
 }

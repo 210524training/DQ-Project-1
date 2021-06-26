@@ -1,12 +1,12 @@
 import express, { Router, Request, Response } from 'express';
 // import path from 'path';
-import { log } from 'console';
 import userRouter from './userRouter';
 import reimbursementRouter from './reimbursementRouter';
 import userService from '../services/userService';
 
 const baseRouter = Router();
 
+// eslint-disable-next-line max-len
 // baseRouter.post('/login', async (req: express.Request<unknown, unknown, { username: string, password: string }, unknown, {}>, res) => {
 //   const { username, password } = req.body;
 

@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 
 export const Container = styled.div`
-    min-height: 692px;
+    height: 1000px;
     bottom: 0;
     left: 0;
     right: 0;
@@ -24,20 +24,20 @@ export const FormWrap = styled.div`
     `;
 
 export const Icon = styled(Link)`
-    margin-left: 32px;
-    margin-top: 2rem;
-    margin-bottom: 2rem;
-    text-decoration: none;
-    color: #fff;
-    font-weight: 700;
-    font-size: 32px;
+margin-left: 32px;
+margin-top: 2rem;
+text-decoration: none;
+color: #fff;
+font-size: 1.5rem;
+display: flex;
+align-items: center;
+justify-self: flex-start;
 
-    @media screen and (max-width: 480px) {
-        margin-left: 16px;
-        margin-top: 8px;
-    }
+@media screen and (max-width: 480px) {
+    margin-left: 16px;
+    margin-top: 8px;
+}
 `;
-
 export const FormContent = styled.div`
     height: 100%;
     display: flex;
@@ -60,7 +60,6 @@ export const Form = styled.form`
     margin-bottom: 4em;
     padding: 80px 32px;
     border-radius: 4px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
 
     @media screen and (max-width: 400px) {
         padding: 32px 32px;
@@ -70,8 +69,8 @@ export const Form = styled.form`
 export const FormH1 = styled.h1`
     margin-bottom: 40px;
     color: #fff;
-    font-size: 20px;
-    font-weight: 400;
+    font-size: 40px;
+    font-weight: bold;
     text-align: center;
 `;
 

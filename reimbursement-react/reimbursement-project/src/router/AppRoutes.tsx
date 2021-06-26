@@ -12,9 +12,12 @@ import ReimbursementForm from '../components/pages/submit-form/ReimbursementForm
 import FinalGradesPage from '../components/pages/view-reimbursements/FinalGrades';
 import user from '../models/user';
 
+
+
 const AppRoutes: React.FC<unknown> = (props) => {
 
-      if(user) {
+  const user = useAppSelector<UserState>(selectUser);
+      if(!user) {
         return ( 
     <Switch>
         <Route exact path='/'>

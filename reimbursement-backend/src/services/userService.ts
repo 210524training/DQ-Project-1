@@ -82,14 +82,17 @@ export class UserService {
 
   // check if user has maxed their benefits
   async awardAvailable(username: string): Promise<boolean> {
+    console.log('reached awardavail func');
+    console.log(username);
     const result = await this.dao.findByUsername(username);
-
+    console.log(typeof result);
     if(result) {
       const amount = result.amountAwarded;
+      console.log(amount);
       if(amount >= 1000) {
         return false;
       } if(result === null) {
-        return false;
+        return true;
       }
     } return true;
   }

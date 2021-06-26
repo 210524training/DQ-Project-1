@@ -30,6 +30,7 @@ export class UserRepository {
   }
 
   async findByUsername(username: string): Promise<User | null> {
+    console.log('inside the repository find');
     const params: DocumentClient.QueryInput = {
       TableName: 'USERS-table',
       KeyConditionExpression: '#u = :user',
@@ -38,19 +39,15 @@ export class UserRepository {
       },
       ExpressionAttributeNames: {
         '#u': 'username',
-        '#p': 'password',
-        '#r': 'role',
-        '#a': 'amount awarded',
       },
-      ProjectionExpression: '#u, #p, #r #a',
     };
 
     const data = await this.docClient.query(params).promise();
 
     if(data.Items) {
+      log.info('found a user in dynamodb');
       return data.Items[0] as User;
-    }
-    log.debug('Somn Wrooooooong');
+    } log.info('no user matches username');
     return null;
   }
 

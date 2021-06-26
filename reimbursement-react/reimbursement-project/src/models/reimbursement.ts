@@ -8,7 +8,7 @@ export default class Reimbursement {
       public location: string,
       public fileDate: string,
       public type: string,
-      public cost: number,
+      public cost: string,
       public status: string = "Pending Supervisor",
       public format: string,
       public projectedReimbursement: number = 0,

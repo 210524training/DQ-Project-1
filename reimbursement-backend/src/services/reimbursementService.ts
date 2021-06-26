@@ -1,3 +1,4 @@
+import { log } from 'console';
 import Reimbursement from '../models/reimbursement';
 import reimbursementRepository, { ReimbursementRepository } from '../repositories/reimbursementRepo';
 import updateProjection from './projectedReimbursement';
@@ -15,24 +16,23 @@ export class ReimbursementService {
   }
 
   getByUsername(username: string): Promise<Reimbursement[]> {
+    console.log('am i being called?');
     return this.dao.getByUsername(username);
   }
 
-  getByID(id: string): Promise<Reimbursement | null> {
-    return this.dao.getById(id);
+  getByID(id: string, username: string): Promise<Reimbursement | null> {
+    return this.dao.getById(id, username);
   }
 
   async add(reimbursement: Reimbursement): Promise<boolean> {
-    const result = await userService.awardAvailable(reimbursement.username);
-    if(result) {
-      return this.dao.addReimbursement(reimbursement);
-    } return false;
+    return this.dao.addReimbursement(reimbursement);
   }
 
+  // has a get byid
   async update(reimbursement: Reimbursement): Promise<boolean> {
     const found = await updateProjection(reimbursement);
     if(found) {
-      return this.dao.updateProjectedAmount(reimbursement);
+      return this.dao.updateProjectedAmount(found);
     } return false;
   }
 
