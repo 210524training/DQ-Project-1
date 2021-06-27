@@ -3,6 +3,7 @@ import express, { Router, Request, Response } from 'express';
 import userRouter from './userRouter';
 import reimbursementRouter from './reimbursementRouter';
 import userService from '../services/userService';
+import messageRouter from './messageRouter';
 
 const baseRouter = Router();
 
@@ -24,6 +25,7 @@ const baseRouter = Router();
 // });
 
 async function login(req: Request, res: Response): Promise<void> {
+  console.log('bout to send to dynamo');
   const { username, password } = req.body;
 
   const user = await userService.login(username, password);
@@ -54,5 +56,5 @@ baseRouter.post('/logout', logout);
 baseRouter.post('/login', login);
 baseRouter.use('/api/v1/users', userRouter);
 baseRouter.use('/api/v1/reimbursements', reimbursementRouter);
-
+baseRouter.use('/api/v1/messages', messageRouter);
 export default baseRouter;

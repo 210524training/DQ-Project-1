@@ -3,6 +3,7 @@ import Reimbursement from "../../models/reimbursement";
 import User from "../../models/user";
 import reimbursementClient from "./reimbursement.client";
 import { v4 as uuidv4 } from 'uuid';
+import { EndOfLineState } from "typescript";
 
 export const sendLogin = async (username: string, password: string): Promise<User> => {
   const {data: user} = await reimbursementClient.post<User>('/login', {
@@ -29,19 +30,19 @@ export const register = async ({username, password, role}: User): Promise<boolea
 }
 
 //add reimbursement 
-export const addReimbursement = async ({ id, username, startDate, location, fileDate, type, cost, status, format, projectedReimbursement, amountAwarded}: Reimbursement): Promise<boolean> => {
+export const addReimbursement = async ({ id, username, start, location, file, type, cost, status, format, projected, awarded}: Reimbursement): Promise<boolean> => {
   const response = await reimbursementClient.post('/api/v1/reimbursements/form/submit', {
       id, 
       username,
-      startDate,
+      start,
       location,
-      fileDate,
+      file,
       type,
       cost,
       status, 
       format,
-      projectedReimbursement,
-      amountAwarded,
+      projected,
+      awarded,
   })
 
   if (response) { 
@@ -53,22 +54,29 @@ export const addReimbursement = async ({ id, username, startDate, location, file
 
 //delete reimbursement
 export const deleteReimbursement = async (id: string, username: string) => {
-  const { data } = await reimbursementClient.delete<boolean>(`/api/v1/reimbursements/${id}/${username}`)
+  const response = await reimbursementClient.delete<boolean>(`/api/v1/reimbursements/delete/${id}/${username}`)
+
+  if(response) {
+    return true;
+  }
+  return false;
 }
 
 //get pending reimbursement
-export const getByRole = async ( role: string, username: string,): Promise<Reimbursement[]> => {
-  const {data} = await reimbursementClient.get<Reimbursement[]>(`/api/v1/reimbursements/${username}/${role}`);
-  return data
-}
+// export const getByRole = async ( role: string, username: string,): Promise<Reimbursement[]> => {
+//   const {data} = await reimbursementClient.get<Reimbursement[]>(`/api/v1/reimbursements/${username}/${role}`);
+//   return data
+// }
 
 export const getByID= async (id: string): Promise<Reimbursement> => {
-  const  {data}  = await reimbursementClient.get<Reimbursement>(`/api/v1/reimbursements/${id}`);
+  console.log('inside get by ID')
+  const  {data}  = await reimbursementClient.get<Reimbursement>(`/api/v1/reimbursements/target/${id}`);
   return data
 }
 
 //update amount
 export const updateProjectedAmount = async(reimbursement: Reimbursement ): Promise<boolean> => {
+  console.log('inside update projected amount')
   const response = await reimbursementClient.put('/api/v1/reimbursements/update', {reimbursement,});
 
   if(response) {
@@ -77,8 +85,17 @@ export const updateProjectedAmount = async(reimbursement: Reimbursement ): Promi
   return false;
 }
 
-export const putAward = async(reimbursement: Reimbursement ): Promise<boolean> => {
-  const response = await reimbursementClient.put('/api/v1/users/update', {reimbursement,});
+
+export const getUser = async (username: string): Promise<User> => {
+  console.log('inside get user remote')
+  const {data} = await reimbursementClient.get<User>(`api/v1/users/${username}`);
+  console.log(data);
+  return data;
+}
+
+export const putAward = async(user: User ): Promise<boolean> => {
+  console.log('inside put award remote')
+  const response = await reimbursementClient.put('/api/v1/users/update', user,);
 
   if(response) {
     return true;
@@ -89,7 +106,8 @@ export const putAward = async(reimbursement: Reimbursement ): Promise<boolean> =
 
 
 export const accept = async(reimbursement: Reimbursement ): Promise<boolean> => {
-  const response = await reimbursementClient.put('/api/v1/reimbursements/accept', {reimbursement,});
+  console.log('inside accept')
+  const response = await reimbursementClient.put('/api/v1/reimbursements/accept', reimbursement,);
 
   if(response) {
     return true;
@@ -99,6 +117,7 @@ export const accept = async(reimbursement: Reimbursement ): Promise<boolean> => 
 
 
 export const reject = async(reimbursement: Reimbursement): Promise<boolean> => {
+  console.log('inside reject')
   const response = await reimbursementClient.put(`/api/v1/reimbursements/reject`, {reimbursement,});
 
   if(response) {
@@ -118,49 +137,63 @@ export const reject = async(reimbursement: Reimbursement): Promise<boolean> => {
 
 
 //view presentation
-export const viewFinalSubmission = async (role: string): Promise<Reimbursement[]> => {
-  const { data } = await reimbursementClient.get<Reimbursement[]>(`/api/v1/reimbursements/${role}`);
+export const viewFinalGrade = async (): Promise<Reimbursement[]> => {
+    const { data } = await reimbursementClient.get<Reimbursement[]>(`/api/v1/reimbursements/approval/benco`);
   return data
-}
+    
+  }
+
+  export const viewPresentation = async (): Promise<Reimbursement[]> => {
+    const { data } = await reimbursementClient.get<Reimbursement[]>(`/api/v1/reimbursements/approval/supervisor`);
+  return data
+  }
 
 //conditionalviews
 export const supervisorView = async (): Promise<Reimbursement[]> => {
-  const {data} = await reimbursementClient.get<Reimbursement[]>(`/api/v1/reimbursements`)
+  console.log('inside sup api');
+  const {data} = await reimbursementClient.get<Reimbursement[]>(`/api/v1/reimbursements/supervisor`)
   return data;
 }
 
 export const headView = async (): Promise<Reimbursement[]> => {
-  const {data} = await reimbursementClient.get<Reimbursement[]>(`/api/v1/reimbursements`)
+  console.log('inside head api');
+  const {data} = await reimbursementClient.get<Reimbursement[]>(`/api/v1/reimbursements/head`)
   return data;
 }
 
 export const bencoView = async (): Promise<Reimbursement[]> => {
-  const {data} = await reimbursementClient.get<Reimbursement[]>(`/api/v1/reimbursements`)
-  return data
+  console.log('inside benco api');
+  const result = await reimbursementClient.get<Reimbursement[]>(`/api/v1/reimbursements/benco`)
+  return result.data
 }
 
-export const getByUsername = async (): Promise<Reimbursement[]> => {
-  const {data} = await reimbursementClient.get<Reimbursement[]>(`/api/v1/reimbursements`)
-  return data
+export const getByUsername = async (username: string): Promise<Reimbursement[]> => {
+  console.log('inside user api');
+  const result = await reimbursementClient.get<Reimbursement[]>(`/api/v1/reimbursements/${username}`)
+  console.log();
+  return result.data
 }
 
 //conditionalupdates
 export const bencoUpdate = async(reimbursement: Reimbursement): Promise<boolean> => {
-  const response = await reimbursementClient.put(`/api/v1/reimbursements`)
+  console.log('inside benco update')
+  const response = await reimbursementClient.put(`/api/v1/reimbursements/accept/benco`, reimbursement,);
   if (response) {
     return true
   } return false
 }
 
 export const headUpdate = async(reimbursement: Reimbursement): Promise<boolean> => {
-  const response = await reimbursementClient.put(`/api/v1/reimbursements`)
+  console.log('inside head update')
+  const response = await reimbursementClient.put(`/api/v1/reimbursements/accept/head`, reimbursement,);
   if (response) {
     return true
   } return false
 }
 
 export const supervisorUpdate = async(reimbursement: Reimbursement): Promise<boolean> => {
-  const response = await reimbursementClient.put(`/api/v1/reimbursements`)
+  console.log('inside sup update')
+  const response = await reimbursementClient.put(`/api/v1/reimbursements/accept/supervisor`, reimbursement,)
   if (response) {
     return true
   } return false

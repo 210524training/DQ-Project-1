@@ -40,40 +40,32 @@ function capProjection(cost: string, eventType: string) {
 
 export default async function updateProjection(reimbursement: Reimbursement) {
   const projection = capProjection(reimbursement.cost, reimbursement.type);
-  const found = await reimbursementRepository.getById(reimbursement.id, reimbursement.username);
+  const found = await reimbursementRepository.getById(reimbursement.id);
   if(found) {
-    found.projectedReimbursement = projection;
+    found.projected = projection;
     return found;
   }
   return null;
 }
 
-export function conditionalView(role: string, username: string): Promise<Reimbursement[]> {
-  if(role === 'Supervisor') {
-    return reimbursementService.supervisorView();
-  } if(role === 'Department Head') {
-    return reimbursementService.headView();
-  } if(role === 'Benco') {
-    return reimbursementService.bencoView();
-  } if(role === 'Employee') {
-    return reimbursementService.getByUsername(username);
-  } throw new Error('something went wrong');
-}
+// export function conditionalView(role: string, username: string): Promise<Reimbursement[]> {
+//   if(role === 'Supervisor') {
+//     return reimbursementService.supervisorView();
+//   } if(role === 'Department Head') {
+//     return reimbursementService.headView();
+//   } if(role === 'Benco') {
+//     return reimbursementService.bencoView();
+//   } if(role === 'Employee') {
+//     return reimbursementService.getByUsername(username);
+//   } throw new Error('something went wrong');
+// }
 
-export function conditionalUpdate(reimbursement: Reimbursement, role: string) {
-  if(role === 'Supervisor') {
-    return reimbursementService.supervisorUpdate(reimbursement);
-  } if(role === 'Department Head') {
-    return reimbursementService.headUpdate(reimbursement);
-  } if(role === 'Benco') {
-    return reimbursementService.bencoUpdate(reimbursement);
-  } throw new Error('something went wrong');
-}
-
-export function viewFinalGrade(role: string): Promise<Reimbursement[]> {
-  if(role === 'Supervisor') {
-    return reimbursementService.viewPresentation();
-  } if(role === 'Benco') {
-    return reimbursementService.viewGrade();
-  } throw new Error('something went wrong');
-}
+// export function conditionalUpdate(reimbursement: Reimbursement, role: string) {
+//   if(role === 'Supervisor') {
+//     return reimbursementService.supervisorUpdate(reimbursement);
+//   } if(role === 'Department Head') {
+//     return reimbursementService.headUpdate(reimbursement);
+//   } if(role === 'Benco') {
+//     return reimbursementService.bencoUpdate(reimbursement);
+//   } throw new Error('something went wrong');
+// }

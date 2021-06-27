@@ -9,7 +9,6 @@ const userRouter = Router({ mergeParams: true });
 
 // eslint-disable-next-line max-len
 export async function postUser(req: Request<unknown, unknown, User, object>, res: Response): Promise<void> {
-  log.info('Request to create a user');
   const user = req.body;
 
   const result = await userService.register(user);
@@ -20,11 +19,34 @@ export async function postUser(req: Request<unknown, unknown, User, object>, res
   }
 }
 
-export async function putAward(req: Request, res: Response): Promise<void> {
-  log.info('Request to post amount awarded');
-  const reimbursement = req.body;
+userRouter.get('/:username', async (req: Request, res: Response) => {
+  try {
+    console.log('inside reimbursement routes');
 
-  const result = await userService.updateAward(reimbursement);
+    res.json(
+      await userService.findUser(req.params.username),
+    );
+    res.status(200).send();
+  } catch(error) {
+    log.error(error);
+    res.status(500).send();
+  }
+});
+
+// export async function findUser(req: Request, res: Response): Promise<void> {
+//   const { username } = req.params;
+
+//   res.json(
+//     await userService.findUser(username),
+//   );
+// }
+
+export async function putAward(req: Request, res: Response): Promise<void> {
+  console.log('inside put award user route');
+  const user = req.body;
+  console.log(user);
+
+  const result = await userService.addAward(user);
   if(!result) {
     res.status(500);
   } else {
@@ -34,5 +56,5 @@ export async function putAward(req: Request, res: Response): Promise<void> {
 
 userRouter.post('/register', postUser);
 userRouter.put('/update', putAward);
-
+// userRouter.get('/:user', findUser);
 export default userRouter;

@@ -4,15 +4,15 @@ export default class Reimbursement {
   constructor(
     public id: string = uuidv4(),
     public username: string,
-    public startDate: string,
+    public start: string,
     public location: string,
-    public fileDate: string,
+    public file: string,
     public type: string,
     public cost: string,
     public status: string = 'Pending Supervisor',
     public format: string,
-    public projectedReimbursement: number = 0,
-    public amountAwarded: number = 0,
+    public projected: number = 0,
+    public awarded: number = 0,
   ) {}
 }
 

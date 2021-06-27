@@ -16,26 +16,27 @@ const ReimbursementForm = () => {
 
   const user = useAppSelector<UserState>(selectUser);
   const [username, setUsername] = useState<string>('');
-  const [fileDate, setFileDate] = useState<string>('');
-  const [startDate, setStartDate] = useState<string>('');
+  const [file, setFile] = useState<string>('');
+  const [start, setStart] = useState<string>('');
   const [location, setLocation] = useState<string>('');
   const [type, setType] = useState<string>('');
   const [cost, setCost] = useState<string>('0');
   const [format, setFormat] = useState<string>('');
   const [color, setColor] = useState<string>('');
+  const [projection, setProjection] = useState<number>(0);
 
   const dispatch = useAppDispatch();
   const history = useHistory();
 
   function weekFromNow() {
-    console.log(fileDate)
-    let today = Date.parse(fileDate);
-    let stringToDate = new Date(fileDate);
+    console.log(file)
+    let today = Date.parse(file);
+    let stringToDate = new Date(file);
     let nextweek = new Date(stringToDate.getFullYear(), stringToDate.getMonth(), stringToDate.getDate() + 7);
     let nextweekParsed = Date.parse(nextweek.toString());
-    const start = Date.parse(startDate)
+    const startDate = Date.parse(start)
     const weekdifference = nextweekParsed - today;
-    const difference = start - today;
+    const difference = startDate - today;
     if (difference >= weekdifference) {
       console.log('it is at least a week from now')
       return true
@@ -45,8 +46,8 @@ const ReimbursementForm = () => {
 }
 
 function markUrgent() {
-  let today = Date.parse(fileDate);
-  let stringToDate = new Date(fileDate)
+  let today = Date.parse(file);
+  let stringToDate = new Date(file)
   let twoWeeksFromNow = new Date(stringToDate.getFullYear(), stringToDate.getMonth(), stringToDate.getDate() + 14);
   let twoWeeksParsed = Date.parse(twoWeeksFromNow.toString());
   if ((twoWeeksParsed - today) >= 1209600000) {
@@ -60,11 +61,11 @@ const handleUsernameChange = (e: ChangeEvent<HTMLInputElement>) => {
 }
 
 const handleFileDateChange = (e: ChangeEvent<HTMLInputElement>) => {
-  setFileDate(e.target.value);
+  setFile(e.target.value);
 }
 
 const handleStartDateChange = (e: ChangeEvent<HTMLInputElement>) => {
-  setStartDate(e.target.value);
+  setStart(e.target.value);
 }
 
 const handleLocationChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -85,19 +86,112 @@ const handleCostChange = (e: ChangeEvent<HTMLInputElement>) => {
     setCost((e.target.value));
 }
 
+function percentage(num: number, per: number) {
+  return (num / 100) * per;
+}
+
+function capProjection(num: number) {
+  let cap;
+ (num > 1000) ? cap = 1000 : cap = num;
+return cap
+}
+
+// function projectedAmount(cost: string, type: string) {
+//   let result: number;
+//   let cappedResult: number;
+//   switch (type) {
+//   case 'University Course':
+//     result = percentage(Number(cost), 80);
+//     cappedResult = capProjection(result);
+//     setProjection(cappedResult);
+//     break;
+//   case 'Seminar':
+//     result = percentage(Number(cost), 60);
+//     cappedResult = capProjection(result);
+//     setProjection(cappedResult);
+//     break;
+//   case 'Certification Preparation Class':
+//     result = percentage(Number(cost), 75);
+//     cappedResult = capProjection(result);
+//     setProjection(cappedResult);
+//     break;
+//   case 'Certification':
+//     result = percentage(Number(cost), 80);
+//     cappedResult = capProjection(result);
+//     setProjection(cappedResult);
+//     break;
+//   case 'Technical Training':
+//     result = percentage(Number(cost), 90);
+//     cappedResult = capProjection(result);
+//     setProjection(cappedResult);
+//     break;
+//   case 'Other':
+//     result = percentage(Number(cost), 30);
+//     cappedResult = capProjection(result);
+//     setProjection(cappedResult);
+//     break;
+//   }
+//  }
+
+ useEffect(() => {
+  function projectedAmount(cost: string, type: string) {
+    let result: number;
+    let cappedResult: number;
+    switch (type) {
+    case 'University Course':
+      result = percentage(Number(cost), 80);
+      cappedResult = capProjection(result);
+      setProjection(cappedResult);
+      break;
+    case 'Seminar':
+      result = percentage(Number(cost), 60);
+      cappedResult = capProjection(result);
+      setProjection(cappedResult);
+      break;
+    case 'Certification Preparation Class':
+      result = percentage(Number(cost), 75);
+      cappedResult = capProjection(result);
+      setProjection(cappedResult);
+      break;
+    case 'Certification':
+      result = percentage(Number(cost), 80);
+      cappedResult = capProjection(result);
+      setProjection(cappedResult);
+      break;
+    case 'Technical Training':
+      result = percentage(Number(cost), 90);
+      cappedResult = capProjection(result);
+      setProjection(cappedResult);
+      break;
+    case 'Other':
+      result = percentage(Number(cost), 30);
+      cappedResult = capProjection(result);
+      setProjection(cappedResult);
+      break;
+    }
+   }
+   projectedAmount(cost, type);
+ }, [cost, type]);
+
+
+
+
+
+
+
   
   if(user) {const handleFormSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     
     if (weekFromNow()) {
       //award available
-      const amount = user.amountAwarded;
+      const amount = user.awarded;
       console.log(amount)
       if(amount >= 1000) {
         alert('you have reached your max benefit amount');
         history.push('/');
       } else {
-        const newReimbursement = new Reimbursement(uuidv4(), user.username, startDate, location, fileDate, type, cost, 'Pending Supervisor', format, 0, 0);
+        const newReimbursement = new Reimbursement(uuidv4(), user.username, start, location, file, type, cost, 'Pending Supervisor', format, projection, 0);
         console.log(newReimbursement);
         addReimbursement(newReimbursement);
         alert('reimbursement application submitted');
@@ -140,6 +234,8 @@ const handleCostChange = (e: ChangeEvent<HTMLInputElement>) => {
                           <FormOption value="Letter Grade">Letter Grade</FormOption>
                           <FormOption value="Presentation">Presentation</FormOption>
                         </FormSelect>
+                        <FormLabel htmlFor='projected reimbursement'>Projected Reimbursement</FormLabel>
+                        <FormInput type='text' value={projection} readOnly/>
                         <FormButton type='submit'>Submit</FormButton>
                     </Form>
                 </FormContent>

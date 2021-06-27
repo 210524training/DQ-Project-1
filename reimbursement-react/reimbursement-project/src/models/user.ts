@@ -3,7 +3,7 @@ export default class User {
         public username: string,
         public password: string,
         public role: string,
-        public amountAwarded: number,
+        public awarded: number = 0,
       // reimbursement balance?
     ) {}
   }

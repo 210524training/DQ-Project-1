@@ -1,9 +1,10 @@
 export default class Message {
     constructor(
-          public username: string,
-          public role: string,
-          public note: string,
-          public sender: string,
+      public recipient: string,
+      public recipientRole: string,
+      public note: string,
+      public sender: string,
+      public senderRole: string,
     ) {}
   }
   

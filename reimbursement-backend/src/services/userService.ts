@@ -15,7 +15,7 @@ export class UserService {
     return this.dao.getAll();
   }
 
-  findByUsername(username: string): Promise<User | null> {
+  findUser(username: string): Promise<User | null> {
     return this.dao.findByUsername(username);
   }
 
@@ -63,7 +63,7 @@ export class UserService {
   async getUser(reimbursement: Reimbursement): Promise<User | null> {
     const found = await this.dao.findByUsername(reimbursement.username);
     if(found) {
-      found.amountAwarded = reimbursement.amountAwarded;
+      found.awarded = reimbursement.awarded;
       return found;
     } return null;
   }
@@ -73,13 +73,6 @@ export class UserService {
     return this.dao.addAward(user);
   }
 
-  async updateAward(reimbursement: Reimbursement): Promise<boolean> {
-    const found = await this.getUser(reimbursement);
-    if(found) {
-      return this.addAward(found);
-    } return false;
-  }
-
   // check if user has maxed their benefits
   async awardAvailable(username: string): Promise<boolean> {
     console.log('reached awardavail func');
@@ -87,7 +80,7 @@ export class UserService {
     const result = await this.dao.findByUsername(username);
     console.log(typeof result);
     if(result) {
-      const amount = result.amountAwarded;
+      const amount = result.awarded;
       console.log(amount);
       if(amount >= 1000) {
         return false;

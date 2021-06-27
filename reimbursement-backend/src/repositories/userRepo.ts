@@ -30,7 +30,7 @@ export class UserRepository {
   }
 
   async findByUsername(username: string): Promise<User | null> {
-    console.log('inside the repository find');
+    console.log('inside userRepo find by username');
     const params: DocumentClient.QueryInput = {
       TableName: 'USERS-table',
       KeyConditionExpression: '#u = :user',
@@ -165,6 +165,7 @@ export class UserRepository {
   // }
 
   async addAward(user: User): Promise<boolean> {
+    console.log('inside add award repo');
     const params: DocumentClient.UpdateItemInput = {
       TableName: 'USERS-table',
       Key: {
@@ -173,10 +174,10 @@ export class UserRepository {
       },
       UpdateExpression: 'SET #a = :aa',
       ExpressionAttributeValues: {
-        ':aa': user.amountAwarded,
+        ':aa': user.awarded,
       },
       ExpressionAttributeNames: {
-        '#a': 'amount awarded',
+        '#a': 'awarded',
       },
       ReturnValues: 'UPDATED_NEW',
     };
