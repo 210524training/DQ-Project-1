@@ -73,7 +73,9 @@ const MessageForm = () => {
             </Container>
         </>
     )
-}
+} else return (
+    <div>Something's not right</div>
+)
 }
 
 export default MessageForm
