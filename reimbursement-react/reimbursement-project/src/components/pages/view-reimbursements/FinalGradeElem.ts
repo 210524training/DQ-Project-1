@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import styled from 'styled-components'
 
 export const TableButtonReject = styled.button`
@@ -65,3 +66,9 @@ export const Form = styled.form`
         padding: 32px 32px;
     }
 `;
+
+export const StyledLink = styled(Link)`
+    color: blue;
+    font-size: 12px;
+    cursor: pointer;
+`

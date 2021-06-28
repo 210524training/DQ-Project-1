@@ -19,7 +19,7 @@ export const FormOption = styled.option`
 `;
 
 export const Container = styled.div`
-    height: 1000px;
+    height: 1500px;
     bottom: 0;
     left: 0;
     right: 0;
@@ -96,7 +96,7 @@ export const FormH1 = styled.h1`
 
 export const FormInput = styled.input`
     padding: 16px 16px;
-    margin-bottom: 32px;
+    margin-bottom: 12px;
     border: none; 
     border-radius: 4px;
 `;

@@ -11,6 +11,8 @@ import ServicesPage from '../components/pages/body/services';
 import ReimbursementForm from '../components/pages/submit-form/ReimbursementForm';
 import FinalGradesPage from '../components/pages/view-reimbursements/FinalGrades';
 import user from '../models/user';
+import PendingPage from '../components/pages/view-reimbursements/PendingPage';
+import MessagesPage from '../components/messaging/ViewMessage';
 
 
 
@@ -62,6 +64,12 @@ const AppRoutes: React.FC<unknown> = (props) => {
       </Route>
       <Route path='/grades'>
         <FinalGradesPage />
+      </Route>
+      <Route path='/pending'>
+        <PendingPage />
+      </Route>
+      <Route path='/messages'>
+        <MessagesPage />
       </Route>
     </Switch>
   )

@@ -1,10 +1,13 @@
 import React from 'react'
+import UserNav from '../../navbar/UserNav'
 import { ServiceIcon, ServiceLink, ServicesCard, UserBodyContainer, UserBodyH1, UserBodyH2, UserBodyWrapper } from './BodyElem'
 import Image1 from './images/image1.svg'
 import Image2 from './images/image2.svg'
 
 const ServicesPage = () => {
     return (
+        <>
+        <UserNav />
         <UserBodyContainer>
             <UserBodyH1>Our Services</UserBodyH1>
             <UserBodyWrapper>
@@ -22,6 +25,7 @@ const ServicesPage = () => {
                 </ServiceLink>
             </UserBodyWrapper>
         </UserBodyContainer>
+        </>
     )
 }
 

@@ -1,4 +1,3 @@
-import { log } from 'console';
 import Reimbursement from '../models/reimbursement';
 import reimbursementRepository, { ReimbursementRepository } from '../repositories/reimbursementRepo';
 

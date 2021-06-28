@@ -54,7 +54,6 @@ const Register: React.FC<unknown> = (props) => {
         <>
             <Container>
                 <FormWrap>
-                    <Icon to="/">Reimbursements-R-Us</Icon>
                     <FormContent>
                         <Form onSubmit={handleFormSubmit}>
                             <FormH1>Sign up for Account</FormH1>

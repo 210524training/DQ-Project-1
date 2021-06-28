@@ -23,7 +23,7 @@ messageRouter.get('/sender/:role', async (req, res) => {
     console.log('inside message routes');
 
     res.json(
-      await messageService.getByRecipient(req.params.role),
+      await messageService.getBySenderRole(req.params.role),
     );
     res.status(200).send();
   } catch(error) {
@@ -37,7 +37,7 @@ messageRouter.get('/recipient/:role', async (req, res) => {
     console.log('inside message routes');
 
     res.json(
-      await messageService.getByRecipient(req.params.role),
+      await messageService.getByRecipientRole(req.params.role),
     );
     res.status(200).send();
   } catch(error) {
@@ -58,6 +58,6 @@ export async function postMessage(req: Request<unknown, unknown, Message, object
   }
 }
 
-messageRouter.post('/message/send', postMessage);
+messageRouter.post('/send', postMessage);
 
 export default messageRouter;

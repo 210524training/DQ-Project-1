@@ -72,7 +72,7 @@ export const BodyContent = styled.div`
     `
 
 export const UserBodyContainer = styled.div`
-        height: 800px;
+        height: 900px;
         display: flex;
         flex-direction: column;
         justify-content: center;

@@ -7,6 +7,7 @@ import { addReimbursement } from '../../../remote/reimbursement-backend/reimburs
 import { v4 as uuidv4 } from 'uuid'
 import { selectUser, UserState } from '../../../slices/user.slice';
 import Home from '../home/Home';
+import UserNav from '../../navbar/UserNav';
 
 type Props = {
   reimbursement?: Reimbursement
@@ -24,7 +25,7 @@ const ReimbursementForm = () => {
   const [format, setFormat] = useState<string>('');
   const [color, setColor] = useState<string>('');
   const [projection, setProjection] = useState<number>(0);
-
+  const [note, setNote] = useState<string>('');
   const dispatch = useAppDispatch();
   const history = useHistory();
 
@@ -70,6 +71,12 @@ const handleStartDateChange = (e: ChangeEvent<HTMLInputElement>) => {
 
 const handleLocationChange = (e: ChangeEvent<HTMLInputElement>) => {
   setLocation(e.target.value);
+}
+
+const handleNoteChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const str: string = e.target.value
+  setNote(str);
+  console.log(note);
 }
 
 const handleTypeChange = (e: ChangeEvent<HTMLSelectElement>) => {
@@ -191,7 +198,7 @@ return cap
         alert('you have reached your max benefit amount');
         history.push('/');
       } else {
-        const newReimbursement = new Reimbursement(uuidv4(), user.username, start, location, file, type, cost, 'Pending Supervisor', format, projection, 0);
+        const newReimbursement = new Reimbursement(uuidv4(), user.username, start, location, file, type, cost, 'Pending Supervisor', format, projection, 0, note);
         console.log(newReimbursement);
         addReimbursement(newReimbursement);
         alert('reimbursement application submitted');
@@ -205,9 +212,9 @@ return cap
 
   return  (
     <>
+      <UserNav />
         <Container>
             <FormWrap>
-                <Icon to="/home">Reimbursements-R-Us</Icon>
                 <FormContent>
                     <Form onSubmit={handleFormSubmit}>
                         <FormH1>Reimbursement Application</FormH1>
@@ -234,6 +241,8 @@ return cap
                           <FormOption value="Letter Grade">Letter Grade</FormOption>
                           <FormOption value="Presentation">Presentation</FormOption>
                         </FormSelect>
+                        <FormLabel htmlFor='projected reimbursement'>Additional Info:</FormLabel>
+                        <FormInput type='text' onChange={handleNoteChange}/>
                         <FormLabel htmlFor='projected reimbursement'>Projected Reimbursement</FormLabel>
                         <FormInput type='text' value={projection} readOnly/>
                         <FormButton type='submit'>Submit</FormButton>

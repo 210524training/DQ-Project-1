@@ -13,6 +13,7 @@ export default class Reimbursement {
     public format: string,
     public projected: number = 0,
     public awarded: number = 0,
+    public note: string,
   ) {}
 }
 

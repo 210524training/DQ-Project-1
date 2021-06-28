@@ -10,6 +10,8 @@ import { ChangeEvent } from 'react';
 import { Form, FormInput, FormLabel, TableButtonAccept, TableButtonReject } from './FinalGradeElem';
 import { useAppSelector } from '../../../hook';
 import PendingButton from './PendingButton';
+import Navbar from '../../navbar/Navbar';
+import UserNav from '../../navbar/UserNav';
 
 type ButtonEvent = React.MouseEvent<HTMLButtonElement>;
 
@@ -55,85 +57,14 @@ const handleIDChange = (e: ChangeEvent<HTMLInputElement>) => {
         console.log('inside if user')
       const getArray = async (user: User) => {
 
-        let arr: Reimbursement[]
-        switch(user.role) {
-          case 'Employee':
-            console.log('inside cases')
-            arr = await getByUsername(user.username)
-            setReimbursements(arr)
-            break;
-          case 'Supervisor':
-            console.log('inside supervisor cases')
-            arr = await supervisorView();
-            setReimbursements(arr)
-            break
-          case 'Department Head':
-            console.log('inside dep head cases')
-            arr = await headView();
-            setReimbursements(arr)
-            break
-          case 'Benco':
-            console.log('inside benco cases')
-            arr = await bencoView();
-            setReimbursements(arr)
-            break
-          default:
-            console.log('inside default cases')
-            arr = await getByUsername(user.username);
-            setReimbursements(arr)
-          }
+        let arr: Reimbursement[] = await getByUsername(user.username)
+        setReimbursements(arr)
+        
       }
       getArray(user);
   } 
 }, [user]);
 
-  const handleButtonClick = (e: ButtonEvent): void => {
-    e.preventDefault();
-    if(user) {
-    switch(user.role) {
-      case 'Supervisor':
-        history.push('/grades')
-        break
-      case 'Benco':
-        history.push('/grades')
-        break
-      case 'Department Head':
-        alert('you do not have access to this feature')
-        break
-      case 'Employee':
-        alert('you do not have access to this feature')
-        break
-  }
-  }
-}
-
-const handleAccept = async (e: ButtonEvent): Promise<void> => {
-    e.preventDefault();
-    if(user) {
-    const targetClaim = await getByID(id);
-    switch(user.role) {
-      case 'Supervisor':
-        console.log('inside sup switch case')
-        console.log(targetClaim);
-        supervisorUpdate(targetClaim);
-        //calculate update projection amount and set
-        break
-      case 'Department Head':
-        console.log('inside head switch case')
-        headUpdate(targetClaim);
-        //calculate update projection amount and set
-        break
-      case 'Benco':
-        console.log('inside benco switch case')
-        bencoUpdate(targetClaim);
-        //calculate update projection amount and set
-        break
-      case 'Employee':
-        alert('you do not have access to this feature')
-        break;
-      }
-}
-}
 
 const handleReject = async (e: ButtonEvent): Promise<void> => {
     e.preventDefault();
@@ -153,9 +84,9 @@ const handleReject = async (e: ButtonEvent): Promise<void> => {
   return (
         
       <>
+        <UserNav />
         <h1>Your Reimbursements</h1>
         <PendingButton />
-        <FormButton onClick= {handleButtonClick}>View Final Grades</FormButton> 
         <table>
           <thead>
             <tr>
@@ -170,6 +101,7 @@ const handleReject = async (e: ButtonEvent): Promise<void> => {
               <th>Grade Format</th>
               <th>Projected Reimbursement</th>
               <th>Amount Awarded</th>
+              <th>Additional Notes</th>
             </tr>
           </thead>
           {
@@ -186,6 +118,7 @@ const handleReject = async (e: ButtonEvent): Promise<void> => {
                <td>{item.format}</td>
                <td>{item.projected}</td>
                <td>{item.awarded}</td>
+               <td>{item.note}</td>
               </tr>
            ))
           }
@@ -193,8 +126,7 @@ const handleReject = async (e: ButtonEvent): Promise<void> => {
         <Form>
           <FormLabel htmlFor='accept'>Please enter ID</FormLabel>
             <FormInput type='text' required onChange={handleIDChange} />
-            <FormButton type='button' onClick= {handleAccept}>Accept</FormButton>
-            <FormButton type='button' onClick= {handleReject}>Reject/Delete</FormButton>
+            <FormButton type='button' onClick= {handleReject}>Cancel</FormButton>
         </Form>
       </>
         )

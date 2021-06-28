@@ -4,6 +4,7 @@ import User from "../../models/user";
 import reimbursementClient from "./reimbursement.client";
 import { v4 as uuidv4 } from 'uuid';
 import { EndOfLineState } from "typescript";
+import Message from "../../models/message";
 
 export const sendLogin = async (username: string, password: string): Promise<User> => {
   const {data: user} = await reimbursementClient.post<User>('/login', {
@@ -29,8 +30,47 @@ export const register = async ({username, password, role}: User): Promise<boolea
   return false;
 }
 
+export const sendMessage = async ({recipient, recipientRole, note, sender, senderRole}: Message): Promise<boolean> => {
+  const response = await reimbursementClient.post('/api/v1/messages/send', {
+    recipient,
+    recipientRole,
+    note,
+    sender,
+    senderRole
+  });
+
+  if(response) {
+    console.log(response)
+    return true;
+  }
+    console.log(response)
+  return false;
+}
+
+export const getMessageByRecipient = async (recipient: string): Promise<Message[]> => {
+  console.log('inside get message by recipient remote')
+  const {data} = await reimbursementClient.get<Message[]>(`api/v1/users/${recipient}`);
+  console.log(data);
+  return data;
+}
+
+export const getMessageBySenderRole = async (role: string): Promise<Message[]> => {
+  console.log('inside get message by sender role remote')
+  const {data} = await reimbursementClient.get<Message[]>(`api/v1/users/sender/${role}`);
+  console.log(data);
+  return data;
+}
+
+export const getMessageByRecipientRole = async (role: string): Promise<Message[]> => {
+  console.log('inside get message by sender role remote')
+  const {data} = await reimbursementClient.get<Message[]>(`api/v1/users/sender/recipient/${role}`);
+  console.log(data);
+  return data;
+}
+
+
 //add reimbursement 
-export const addReimbursement = async ({ id, username, start, location, file, type, cost, status, format, projected, awarded}: Reimbursement): Promise<boolean> => {
+export const addReimbursement = async ({ id, username, start, location, file, type, cost, status, format, projected, awarded, note}: Reimbursement): Promise<boolean> => {
   const response = await reimbursementClient.post('/api/v1/reimbursements/form/submit', {
       id, 
       username,
@@ -43,6 +83,7 @@ export const addReimbursement = async ({ id, username, start, location, file, ty
       format,
       projected,
       awarded,
+      note
   })
 
   if (response) { 
@@ -118,7 +159,7 @@ export const accept = async(reimbursement: Reimbursement ): Promise<boolean> => 
 
 export const reject = async(reimbursement: Reimbursement): Promise<boolean> => {
   console.log('inside reject')
-  const response = await reimbursementClient.put(`/api/v1/reimbursements/reject`, {reimbursement,});
+  const response = await reimbursementClient.put(`/api/v1/reimbursements/reject`, reimbursement,);
 
   if(response) {
     return true;
@@ -179,22 +220,35 @@ export const bencoUpdate = async(reimbursement: Reimbursement): Promise<boolean>
   console.log('inside benco update')
   const response = await reimbursementClient.put(`/api/v1/reimbursements/accept/benco`, reimbursement,);
   if (response) {
+    alert('claim accepted')
     return true
-  } return false
+  } else {
+    alert('could not accept claim')
+    return false
+}
 }
 
 export const headUpdate = async(reimbursement: Reimbursement): Promise<boolean> => {
   console.log('inside head update')
   const response = await reimbursementClient.put(`/api/v1/reimbursements/accept/head`, reimbursement,);
   if (response) {
+    alert('claim accepted')
     return true
-  } return false
+  }  else {
+    alert('could not accept claim')
+    return false
+}
 }
 
 export const supervisorUpdate = async(reimbursement: Reimbursement): Promise<boolean> => {
   console.log('inside sup update')
   const response = await reimbursementClient.put(`/api/v1/reimbursements/accept/supervisor`, reimbursement,)
   if (response) {
+    alert('claim accepted');
     return true
-  } return false
+  } else {
+    alert ('could not accept claim')
+    return false
+  }
+  
 }

@@ -21,6 +21,7 @@ export class ReimbursementRepository {
         format: reimbursement.format,
         projected: reimbursement.projected,
         awarded: reimbursement.awarded,
+        note: reimbursement.note,
       },
       ReturnConsumedCapacity: 'TOTAL',
     };
@@ -119,7 +120,7 @@ export class ReimbursementRepository {
     const params: DocumentClient.ScanInput = {
       TableName: 'rs-table',
 
-      ProjectionExpression: '#id, #u, #sd, #l, #fd, #t, #c, #s, #gf, #pr, #a',
+      ProjectionExpression: '#id, #u, #sd, #l, #fd, #t, #c, #s, #gf, #pr, #a, #n',
       ExpressionAttributeNames: {
         '#id': 'id',
         '#u': 'username',
@@ -132,6 +133,7 @@ export class ReimbursementRepository {
         '#gf': 'format',
         '#pr': 'projected',
         '#a': 'awarded',
+        '#n': 'note',
       },
       ExpressionAttributeValues: { ':user': username },
       FilterExpression: '#u = :user',

@@ -1,12 +1,27 @@
-import React, { Props } from 'react';
+import React from 'react';
+import { NavLink, useHistory } from 'react-router-dom'
 import {FaBars} from 'react-icons/fa'
-import { Nav, NavbarContainer, NavLogo, MobileIcon, NavMenu, NavItem, NavBtn, NavBtnLink, NavLinks, } from './NavbarElem';
-import { NavLink } from 'react-router-dom';
+import { useAppDispatch, useAppSelector } from '../../hook'
+import { Nav, NavbarContainer, NavLogo, MobileIcon, NavMenu, NavItem, NavBtn, NavLinks, UserNavBtnLink, } from './NavbarElem';
+import { logout } from '../../slices/user.slice';
 // type PropsFunction = {
 //     toggle: () => void
 // }
 
+
+
+
 const UserNav = () => {
+
+    const history = useHistory();
+    const dispatch = useAppDispatch();
+
+    const handleLogout = () => {
+        dispatch(logout());
+    
+        history.push('/');
+      }
+
     return (
         <>
             <Nav>
@@ -19,9 +34,12 @@ const UserNav = () => {
                         <NavItem>
                             <NavLinks to="/services">Services</NavLinks>
                         </NavItem>
+                        <NavItem>
+                            <NavLinks to="/messages">Messages</NavLinks>
+                        </NavItem>
                     </NavMenu>
                     <NavBtn>
-                       <NavBtnLink to="/">Sign out</NavBtnLink> 
+                       <UserNavBtnLink onClick={handleLogout}>Sign out</UserNavBtnLink> 
                     </NavBtn>
                 </NavbarContainer>
             </Nav>

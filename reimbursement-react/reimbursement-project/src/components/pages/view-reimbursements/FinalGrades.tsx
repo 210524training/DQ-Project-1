@@ -7,6 +7,8 @@ import Reimbursement from '../../../models/reimbursement';
 import User from '../../../models/user';
 import { accept, deleteReimbursement, getByID, getUser, putAward, reject, viewFinalGrade, viewPresentation } from '../../../remote/reimbursement-backend/reimbursement.api';
 import { selectUser, UserState } from '../../../slices/user.slice';
+import Navbar from '../../navbar/Navbar';
+import UserNav from '../../navbar/UserNav';
 import { FormButton } from '../login/LoginElem';
 import { Form, FormInput, FormLabel, TableButtonAccept, TableButtonReject } from './FinalGradeElem';
 
@@ -24,26 +26,26 @@ const FinalGradesPage = () => {
         setID(e.target.value);
       }
 
-      const setData = async (user: User) => {
+    //   const setData = async (user: User) => {
 
-        let arr: Reimbursement[]
-        switch(user.role) {
-            case 'Supervisor':
-                arr = await viewPresentation();
-                setReimbursements(arr);
-                break;
-            case 'Department Head':
-                history.goBack()
-                break;
-            case 'Benco':
-                arr = await viewFinalGrade();
-                setReimbursements(arr);
-                break;
-            case 'Employee':
-                history.goBack()
-                break;
-        }
-      }
+    //     let arr: Reimbursement[]
+    //     switch(user.role) {
+    //         case 'Supervisor':
+    //             arr = await viewPresentation();
+    //             setReimbursements(arr);
+    //             break;
+    //         case 'Department Head':
+    //             history.goBack()
+    //             break;
+    //         case 'Benco':
+    //             arr = await viewFinalGrade();
+    //             setReimbursements(arr);
+    //             break;
+    //         case 'Employee':
+    //             history.goBack()
+    //             break;
+    //     }
+    //   }
 
       useEffect(() => {
           if(user) {
@@ -103,6 +105,7 @@ const FinalGradesPage = () => {
     return (
         
         <> 
+        <UserNav />
         <table>
          <thead>
         <tr>
@@ -133,6 +136,7 @@ const FinalGradesPage = () => {
                <td>{item.format}</td>
                <td>{item.projected}</td>
                <td>{item.awarded}</td>
+               <td>{item.note}</td>
               </tr>
            ))
           }
