@@ -20,6 +20,7 @@ const PendingPage: React.FC<unknown> = (): JSX.Element => {
   const [reimbursements, setReimbursements] = useState<Reimbursement[]>([]);
   const history = useHistory();
   const [id, setID] = useState<string>('');
+  const [color, setColor] = useState<string>('');
 
 
 const handleIDChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -39,16 +40,19 @@ useEffect( () => {
           console.log('inside supervisor cases')
           arr = await supervisorView();
           setReimbursements(arr)
+          arr.forEach(el => markUrgent(el.file, el.start))
           break
         case 'Department Head':
           console.log('inside dep head cases')
           arr = await headView();
           setReimbursements(arr)
+          arr.forEach(el => markUrgent(el.file, el.start))
           break
         case 'Benco':
           console.log('inside benco cases')
           arr = await bencoView();
           setReimbursements(arr)
+          arr.forEach(el => markUrgent(el.file, el.start))
           break
         case 'Employee':
             alert('employees can only view their own reimbursement claims')
@@ -77,6 +81,22 @@ const handleButtonClick = (e: ButtonEvent): void => {
       break
 }
 }
+}
+
+function markUrgent(fileDate: string, startDate: string) {
+  let today = Date.parse(fileDate);
+  let stringToDate = new Date(fileDate)
+  let twoWeeksFromNow = new Date(stringToDate.getFullYear(), stringToDate.getMonth(), stringToDate.getDate() + 14);
+  let twoWeeksParsed = Date.parse(twoWeeksFromNow.toString());
+  const start = Date.parse(startDate)
+  const twoWeeksDifference = twoWeeksParsed - today
+  const difference = start - today;
+  if(difference >= twoWeeksDifference) {
+    console.log('it is at least two weeks till the deadline for acceptance')
+  } else {
+    alert('found an urgent claim');
+    setColor('danger')
+  }
 }
 
 const handleAccept = async (e: ButtonEvent): Promise<void> => {
@@ -141,7 +161,7 @@ return (
         </thead>
         {
          reimbursements.map((item, index) => (
-            <tr key={index}>
+            <tr className= {`table-${color}`} key={index}>
              <td>{item.id}</td>
              <td>{item.username}</td>
              <td>{item.start}</td>

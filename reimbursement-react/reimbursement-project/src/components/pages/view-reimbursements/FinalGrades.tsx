@@ -47,6 +47,8 @@ const FinalGradesPage = () => {
     //     }
     //   }
 
+    //get image from bucket
+
       useEffect(() => {
           if(user) {
             const setData = async (user: User) => {

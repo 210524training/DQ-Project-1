@@ -11,7 +11,7 @@ import uploadFile, { getFileStream } from '../services/s3';
 
 const baseRouter = Router();
 
-const upload = multer({ dest: 'uploads/' });
+const upload = multer({ dest: 'upload/' });
 
 const unlinkFile = util.promisify(fs.unlink);
 

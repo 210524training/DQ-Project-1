@@ -49,7 +49,7 @@ export const sendMessage = async ({recipient, recipientRole, note, sender, sende
 
 export const postImage = async ({image, description}: any) => {
   const formData = new FormData();
-  formData.append("image", image)
+  formData.append("file", image)
   formData.append("description", description)
   
   const result = await reimbursementClient.post('/images', formData, {
@@ -58,6 +58,14 @@ export const postImage = async ({image, description}: any) => {
     })
     return result.data
 }
+
+export const getImage = async (key: string) => {
+  console.log('inside get user remote')
+  const {data} = await reimbursementClient.get(`/images/${key}`);
+  console.log(data);
+  return data;
+}
+
 
 
 export const getMessageByRecipient = async (recipient: string): Promise<Message[]> => {

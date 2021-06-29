@@ -63,12 +63,12 @@ const handleIDChange = (e: ChangeEvent<HTMLInputElement>) => {
 
         let arr: Reimbursement[] = await getByUsername(user.username)
         setReimbursements(arr)
-        
+        arr.forEach(el => markUrgent(el.file, el.start))
       }
       getArray(user);
-      reimbursements.forEach(el => markUrgent(el.file, el.start))
+      
   } 
-}, [user, reimbursements]);
+}, [user]);
 
 
 const handleReject = async (e: ButtonEvent): Promise<void> => {
@@ -110,8 +110,7 @@ function markUrgent(fileDate: string, startDate: string) {
     console.log('it is at least two weeks till the deadline for acceptance')
   } else {
     alert('found an urgent claim');
-    setColor('Danger')
-    return true
+    setColor('danger')
   }
 }
 
@@ -161,14 +160,16 @@ function markUrgent(fileDate: string, startDate: string) {
           }
         </table>
 
-        <Form onSubmit={handleSubmit}>
+        <Form>
           <FormLabel htmlFor='accept'>Please enter ID</FormLabel>
-            <FormInput type='text' required onChange={handleIDChange} />
+            <FormInput type='text' onChange={handleIDChange} />
             <FormButton type='button' onClick= {handleReject}>Cancel</FormButton>
-            <input onChange={fileSelected} type="file" accept="image/*"></input>
+        </Form>
+        <form onSubmit={handleSubmit} action='/upload' method="post" encType="multipar/form-data">
+          <input onChange={fileSelected} type="file" name='file'></input>
             <input type="text" onChange={handleDescriptionChange} required></input>
             <button type="submit">Submit</button>
-        </Form>
+        </form>
 
         {
           images.map( (image: any) => (
