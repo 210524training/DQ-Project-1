@@ -13,6 +13,8 @@ import FinalGradesPage from '../components/pages/view-reimbursements/FinalGrades
 import user from '../models/user';
 import PendingPage from '../components/pages/view-reimbursements/PendingPage';
 import MessagesPage from '../components/messaging/ViewMessage';
+import Message from '../models/message';
+import MessageForm from '../components/messaging/MessageForm';
 
 
 
@@ -70,6 +72,9 @@ const AppRoutes: React.FC<unknown> = (props) => {
       </Route>
       <Route path='/messages'>
         <MessagesPage />
+      </Route>
+      <Route path='/message/form'>
+        <MessageForm />
       </Route>
     </Switch>
   )

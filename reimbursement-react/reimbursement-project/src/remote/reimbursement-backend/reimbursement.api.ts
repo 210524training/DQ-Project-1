@@ -47,6 +47,19 @@ export const sendMessage = async ({recipient, recipientRole, note, sender, sende
   return false;
 }
 
+export const postImage = async ({image, description}: any) => {
+  const formData = new FormData();
+  formData.append("image", image)
+  formData.append("description", description)
+  
+  const result = await reimbursementClient.post('/images', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data'}
+    })
+    return result.data
+}
+
+
 export const getMessageByRecipient = async (recipient: string): Promise<Message[]> => {
   console.log('inside get message by recipient remote')
   const {data} = await reimbursementClient.get<Message[]>(`api/v1/users/${recipient}`);

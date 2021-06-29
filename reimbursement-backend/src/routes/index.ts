@@ -1,31 +1,40 @@
 import express, { Router, Request, Response } from 'express';
 // import path from 'path';
+import fs from 'fs';
+import util from 'util';
+import multer from 'multer';
 import userRouter from './userRouter';
 import reimbursementRouter from './reimbursementRouter';
 import userService from '../services/userService';
 import messageRouter from './messageRouter';
+import uploadFile, { getFileStream } from '../services/s3';
 
 const baseRouter = Router();
 
-// eslint-disable-next-line max-len
-// baseRouter.post('/login', async (req: express.Request<unknown, unknown, { username: string, password: string }, unknown, {}>, res) => {
-//   const { username, password } = req.body;
+const upload = multer({ dest: 'uploads/' });
 
-//   try {
-//     const current = await userService.login(username, password);
-//     req.session.isLoggedIn = true;
+const unlinkFile = util.promisify(fs.unlink);
 
-//     req.session.user = current;
+baseRouter.get('/images/:key', (req, res) => {
+  const { key } = req.params;
+  const readStream = getFileStream(key);
 
-//     res.json(req.session.user);
-//     res.status(202).send();
-//   } catch(error) {
-//     res.status(401).send();
-//   }
-// });
+  readStream.pipe(res);
+});
+
+baseRouter.post('/images', upload.single('file'), async (req, res) => {
+  const { file } = req;
+  console.log(file);
+  if(file) {
+    const result = await uploadFile(file);
+    await unlinkFile(file.path);
+    console.log(result);
+    const { description } = req.body;
+    res.send({ imagePath: `/images/${result.Key}` });
+  }
+});
 
 async function login(req: Request, res: Response): Promise<void> {
-  console.log('bout to send to dynamo');
   const { username, password } = req.body;
 
   const user = await userService.login(username, password);

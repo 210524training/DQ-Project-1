@@ -1,10 +1,10 @@
 
-import React, { useEffect, useState } from 'react';
+import React, { FormEvent, useEffect, useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import Reimbursement from '../../../models/reimbursement';
 import User from '../../../models/user';
 import { selectUser, UserState } from '../../../slices/user.slice';
-import { bencoUpdate, bencoView, deleteReimbursement, getByID, getByUsername, headUpdate, headView, reject, supervisorUpdate, supervisorView } from '../../../remote/reimbursement-backend/reimbursement.api';
+import { bencoUpdate, bencoView, deleteReimbursement, getByID, getByUsername, headUpdate, headView, postImage, reject, supervisorUpdate, supervisorView } from '../../../remote/reimbursement-backend/reimbursement.api';
 import { FormButton } from '../login/LoginElem';
 import { ChangeEvent } from 'react';
 import { Form, FormInput, FormLabel, TableButtonAccept, TableButtonReject } from './FinalGradeElem';
@@ -20,6 +20,10 @@ const ReimbursementPage: React.FC<unknown> = (props): JSX.Element => {
   const [reimbursements, setReimbursements] = useState<Reimbursement[]>([]);
   const history = useHistory();
   const [id, setID] = useState<string>('');
+  const [file, setFile] = useState([]);
+  const [images, setImages] = useState<any>([])
+  const [description, setDescription] = useState<string>('')
+  const [color, setColor] = useState<string>('');
 
 
 const handleIDChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -62,8 +66,9 @@ const handleIDChange = (e: ChangeEvent<HTMLInputElement>) => {
         
       }
       getArray(user);
+      reimbursements.forEach(el => markUrgent(el.file, el.start))
   } 
-}, [user]);
+}, [user, reimbursements]);
 
 
 const handleReject = async (e: ButtonEvent): Promise<void> => {
@@ -76,6 +81,38 @@ const handleReject = async (e: ButtonEvent): Promise<void> => {
     } else reject(targetClaim);
     alert('successfully rejected claim');
 }
+}
+
+const handleDescriptionChange = (e: ChangeEvent<HTMLInputElement>) => {
+  setDescription(e.target.value);
+}
+
+const handleSubmit = async(e: FormEvent<HTMLFormElement>): Promise<void> => {
+  e.preventDefault();
+  const result = await postImage({image: file, description})
+  setImages([result.image, ...images])
+}
+
+const fileSelected = (e: any) => {
+  const file = e.target.files[0]
+  setFile(file)
+}
+
+function markUrgent(fileDate: string, startDate: string) {
+  let today = Date.parse(fileDate);
+  let stringToDate = new Date(fileDate)
+  let twoWeeksFromNow = new Date(stringToDate.getFullYear(), stringToDate.getMonth(), stringToDate.getDate() + 14);
+  let twoWeeksParsed = Date.parse(twoWeeksFromNow.toString());
+  const start = Date.parse(startDate)
+  const twoWeeksDifference = twoWeeksParsed - today
+  const difference = start - today;
+  if(difference >= twoWeeksDifference) {
+    console.log('it is at least two weeks till the deadline for acceptance')
+  } else {
+    alert('found an urgent claim');
+    setColor('Danger')
+    return true
+  }
 }
 
 //edit amount function for benco
@@ -106,7 +143,7 @@ const handleReject = async (e: ButtonEvent): Promise<void> => {
           </thead>
           {
            reimbursements.map((item, index) => (
-              <tr key={index}>
+              <tr className= {`table-${color}`} key={index}>
                <td>{item.id}</td>
                <td>{item.username}</td>
                <td>{item.start}</td>
@@ -123,11 +160,23 @@ const handleReject = async (e: ButtonEvent): Promise<void> => {
            ))
           }
         </table>
-        <Form>
+
+        <Form onSubmit={handleSubmit}>
           <FormLabel htmlFor='accept'>Please enter ID</FormLabel>
             <FormInput type='text' required onChange={handleIDChange} />
             <FormButton type='button' onClick= {handleReject}>Cancel</FormButton>
+            <input onChange={fileSelected} type="file" accept="image/*"></input>
+            <input type="text" onChange={handleDescriptionChange} required></input>
+            <button type="submit">Submit</button>
         </Form>
+
+        {
+          images.map( (image: any) => (
+            <div key={image}>
+              <img alt="" src={image}></img>
+            </div>
+          ))
+        }
       </>
         )
 }
