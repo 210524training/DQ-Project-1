@@ -55,8 +55,10 @@ export const postImage = async ({image, description}: any) => {
   const result = await reimbursementClient.post('/images', formData, {
     headers: {
       'Content-Type': 'multipart/form-data'}
-    })
+    })         
+    console.log(result.data);             
     return result.data
+    
 }
 
 export const getImage = async (key: string) => {
@@ -70,28 +72,28 @@ export const getImage = async (key: string) => {
 
 export const getMessageByRecipient = async (recipient: string): Promise<Message[]> => {
   console.log('inside get message by recipient remote')
-  const {data} = await reimbursementClient.get<Message[]>(`api/v1/users/${recipient}`);
+  const {data} = await reimbursementClient.get<Message[]>(`api/v1/messages/${recipient}`);
   console.log(data);
   return data;
 }
 
 export const getMessageBySenderRole = async (role: string): Promise<Message[]> => {
   console.log('inside get message by sender role remote')
-  const {data} = await reimbursementClient.get<Message[]>(`api/v1/users/sender/${role}`);
+  const {data} = await reimbursementClient.get<Message[]>(`api/v1/messages/sender/${role}`);
   console.log(data);
   return data;
 }
 
 export const getMessageByRecipientRole = async (role: string): Promise<Message[]> => {
   console.log('inside get message by sender role remote')
-  const {data} = await reimbursementClient.get<Message[]>(`api/v1/users/sender/recipient/${role}`);
+  const {data} = await reimbursementClient.get<Message[]>(`api/v1/messages/recipient/${role}`);
   console.log(data);
   return data;
 }
 
 
 //add reimbursement 
-export const addReimbursement = async ({ id, username, start, location, file, type, cost, status, format, projected, awarded, note}: Reimbursement): Promise<boolean> => {
+export const addReimbursement = async ({ id, username, start, location, file, type, cost, status, format, projected, awarded, note, urgent}: Reimbursement): Promise<boolean> => {
   const response = await reimbursementClient.post('/api/v1/reimbursements/form/submit', {
       id, 
       username,
@@ -104,7 +106,8 @@ export const addReimbursement = async ({ id, username, start, location, file, ty
       format,
       projected,
       awarded,
-      note
+      note,
+      urgent
   })
 
   if (response) { 
@@ -272,4 +275,16 @@ export const supervisorUpdate = async(reimbursement: Reimbursement): Promise<boo
     return false
   }
   
+}
+
+export const updateFile = async(reimbursement: Reimbursement): Promise<boolean> => {
+  console.log('inside head update')
+  const response = await reimbursementClient.put(`/api/v1/reimbursements/update/file`, reimbursement,);
+  if (response) {
+    alert('claim updated')
+    return true
+  }  else {
+    alert('could not update claim')
+    return false
+}
 }

@@ -7,8 +7,9 @@ import Message from '../../models/message';
 import { sendMessage } from '../../remote/reimbursement-backend/reimbursement.api';
 import { selectUser, UserState } from '../../slices/user.slice';
 import UserNav from '../navbar/UserNav';
-import { Container, Form, FormButton, FormContent, FormH1, FormInput, FormLabel, FormWrap } from '../pages/register/RegisterElem';
+import { Container, Form, FormButton, FormContent, FormH1, FormInput, FormLabel, FormWrap } from './MessageFormElem';
 import { FormOption, FormSelect } from '../pages/submit-form/FormOptionsElem';
+import PendingPage from '../pages/view-reimbursements/PendingPage';
 
 const MessageForm = () => {
 
@@ -39,14 +40,14 @@ const MessageForm = () => {
         const result = await sendMessage(newMessage);
         if(result) {
             alert('message sent')
-            history.go(0)
+            history.goBack();
         } else alert('unable to send message')
     }
 
     
     return (
         <>
-            <UserNav />
+            <PendingPage />
             <Container>
                 <FormWrap>
                     <FormContent>
@@ -55,11 +56,22 @@ const MessageForm = () => {
                             <FormLabel htmlFor= "to">To:</FormLabel>
                             <FormInput type='text' required onChange={handleRecipientChange}/>
                             <FormLabel htmlFor= "role">Role</FormLabel>
-                            <FormSelect onChange={handleRecipientRoleChange}>
+                            {(user.role === 'Benco') ? 
+                            (<FormSelect onChange={handleRecipientRoleChange}>
                                 <FormOption value="Employee">Employee</FormOption>
                                 <FormOption value="Supervisor">Supervisor</FormOption>
                                 <FormOption value="Department Head">Department Head</FormOption>
-                            </FormSelect>
+                            </FormSelect>)
+                            : (user.role === 'Department Head') ? 
+                            (<FormSelect onChange={handleRecipientRoleChange}>
+                                <FormOption value="Employee">Employee</FormOption>
+                                <FormOption value="Supervisor">Supervisor</FormOption>
+                            </FormSelect>) : 
+                            (<FormSelect onChange={handleRecipientRoleChange}>
+                                <FormOption value="Employee">Employee</FormOption>
+                                <FormOption value=""></FormOption>
+                            </FormSelect> )
+                            }
                             <FormLabel htmlFor= "message">Message</FormLabel>
                             <FormInput type='text' required onChange={handleNoteChange}/>
                             <FormLabel htmlFor= "from">From: </FormLabel>

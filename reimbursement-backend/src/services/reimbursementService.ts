@@ -89,6 +89,11 @@ export class ReimbursementService {
   viewPresentation(): Promise<Reimbursement[]> {
     return this.dao.viewPresentation();
   }
+
+  updateFile(reimbursement: Reimbursement): Promise<boolean> {
+    console.log('inside backend update file');
+    return this.dao.updateFile(reimbursement);
+  }
 }
 
 const reimbursementService = new ReimbursementService();

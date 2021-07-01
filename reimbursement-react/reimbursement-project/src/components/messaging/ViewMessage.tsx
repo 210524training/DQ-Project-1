@@ -3,9 +3,11 @@ import { useHistory } from "react-router-dom";
 import { useAppSelector } from "../../hook";
 import Message from "../../models/message";
 import User from "../../models/user";
-import { getMessageByRecipientRole } from "../../remote/reimbursement-backend/reimbursement.api";
+import { getMessageByRecipient, getMessageByRecipientRole } from "../../remote/reimbursement-backend/reimbursement.api";
 import { selectUser, UserState } from "../../slices/user.slice";
 import UserNav from "../navbar/UserNav";
+import { StyledLink } from "../pages/view-reimbursements/FinalGradeElem";
+import MessageForm from "./MessageForm";
 
 type ButtonEvent = React.MouseEvent<HTMLButtonElement>;
 
@@ -21,27 +23,10 @@ const MessagesPage = () => {
           if(user) {
             const setData = async (user: User) => {
 
-                let arr: Message[]
-                switch(user.role) {
-                    case 'Supervisor':
-                        arr = await getMessageByRecipientRole('Supervisor');
-                        setMessages(arr);
-                        break;
-                    case 'Department Head':
-                        arr = await getMessageByRecipientRole('Supervisor');
-                        setMessages(arr);
-                        break;
-                    case 'Benco':
-                        arr = await getMessageByRecipientRole('Supervisor');
-                        setMessages(arr);
-                        break;
-                    case 'Employee':
-                        arr = await getMessageByRecipientRole('Supervisor');
-                        setMessages(arr);
-                        break;
-                }
+                let arr: Message[] = await getMessageByRecipient(user.username);
+                setMessages(arr);
               }
-              setData(user)
+              setData(user);
           }
       }, [user]);
 
@@ -51,7 +36,7 @@ const MessagesPage = () => {
         
         <> 
         <UserNav />
-        <table>
+        <table className = "table table-striped table-bordered">
          <thead>
         <tr>
            <th>To</th>
@@ -69,8 +54,6 @@ const MessagesPage = () => {
            ))
           }
         </table>
-        {/* add file upload button */}
-        {/* add link to message form */}
         </>
         )
 }

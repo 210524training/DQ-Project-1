@@ -1,9 +1,9 @@
-import { NavBtnLink } from "../../navbar/NavbarElem"
+import { PenBtnLink } from "../../navbar/NavbarElem"
 import React from 'react'
 
 const PendingButton = () => {
     return(
-        <NavBtnLink to="/pending">View Pending</NavBtnLink>
+        <PenBtnLink to="/pending">View Pending</PenBtnLink>
     )
 }
 

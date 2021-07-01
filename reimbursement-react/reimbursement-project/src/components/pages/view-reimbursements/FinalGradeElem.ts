@@ -29,8 +29,7 @@ export const FormLabel = styled.label`
 
 export const FormInput = styled.input`
     padding: 10px 10px;
-    margin-bottom: 8px;
-    border: none; 
+    margin-bottom: 8px; 
     border-radius: 4px;`
 
 export const FormButtonAccept = styled.button`

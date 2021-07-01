@@ -83,10 +83,12 @@ const FinalGradesPage = () => {
         console.log(targetClaim);
         //update amount awarded function
         accept(targetClaim);
-        const found = await getUser(targetClaim.username)
-        found.awarded = targetClaim.awarded
+        const found = await getUser(targetClaim.username);
+        found.awarded = targetClaim.awarded;
         console.log(found)
-        putAward(found);
+        await putAward(found);
+        alert('claim accepted');
+        history.goBack();
             }
         }
     
@@ -98,7 +100,9 @@ const FinalGradesPage = () => {
     
         const targetClaim = await getByID(id)
         if(user) {
-            (user.role === 'Employee') ? deleteReimbursement(targetClaim.id, targetClaim.username) : reject(targetClaim);
+               const result = reject(targetClaim);
+               (result) ? alert('claim rejected') : alert('unable to reject')
+                history.goBack();
         }
     }
 
@@ -108,7 +112,7 @@ const FinalGradesPage = () => {
         
         <> 
         <UserNav />
-        <table>
+        <table className="table table-striped table-sm table-bordered mt-4">
          <thead>
         <tr>
            <th>ID</th>
@@ -146,8 +150,8 @@ const FinalGradesPage = () => {
         <Form>
                 <FormLabel htmlFor='accept'>Please enter ID</FormLabel>
                 <FormInput type='text' required onChange={handleIDChange} />
-                <FormButton type='button' onClick= {handleAccept}>Accept</FormButton>
-                <FormButton type='button' onClick= {handleReject}>Reject</FormButton>
+                <button type='button' className='btn btn-primary mb-2' onClick= {handleAccept}>Accept</button>
+                <button type='button' className='btn btn-danger' onClick= {handleReject}>Reject</button>
         </Form>
         </>
         )

@@ -9,7 +9,8 @@ import MessageForm from "../../messaging/MessageForm";
 import Navbar from "../../navbar/Navbar";
 import { NavLinks } from "../../navbar/NavbarElem";
 import UserNav from "../../navbar/UserNav";
-import { FormButton } from "../login/LoginElem";
+import Home from "../home/Home";
+import { FormButton, GradeButton } from "../login/LoginElem";
 import { Form, FormInput, FormLabel, StyledLink } from "./FinalGradeElem";
 
 
@@ -20,14 +21,19 @@ const PendingPage: React.FC<unknown> = (): JSX.Element => {
   const [reimbursements, setReimbursements] = useState<Reimbursement[]>([]);
   const history = useHistory();
   const [id, setID] = useState<string>('');
-  const [color, setColor] = useState<string>('');
+  const [amount, setAmount] = useState<string>('');
 
 
 const handleIDChange = (e: ChangeEvent<HTMLInputElement>) => {
         setID(e.target.value);
       }
 
+const handleAmountChange = (e: ChangeEvent<HTMLInputElement>) => {
+        setAmount((e.target.value));
+    }
+    
 
+ // arr.forEach(el => markUrgent(el.file, el.start))
 
 useEffect( () => {
     if (user) {
@@ -39,20 +45,17 @@ useEffect( () => {
         case 'Supervisor':
           console.log('inside supervisor cases')
           arr = await supervisorView();
-          setReimbursements(arr)
-          arr.forEach(el => markUrgent(el.file, el.start))
+          setReimbursements(arr);
           break
         case 'Department Head':
           console.log('inside dep head cases')
           arr = await headView();
           setReimbursements(arr)
-          arr.forEach(el => markUrgent(el.file, el.start))
           break
         case 'Benco':
           console.log('inside benco cases')
           arr = await bencoView();
           setReimbursements(arr)
-          arr.forEach(el => markUrgent(el.file, el.start))
           break
         case 'Employee':
             alert('employees can only view their own reimbursement claims')
@@ -83,41 +86,29 @@ const handleButtonClick = (e: ButtonEvent): void => {
 }
 }
 
-function markUrgent(fileDate: string, startDate: string) {
-  let today = Date.parse(fileDate);
-  let stringToDate = new Date(fileDate)
-  let twoWeeksFromNow = new Date(stringToDate.getFullYear(), stringToDate.getMonth(), stringToDate.getDate() + 14);
-  let twoWeeksParsed = Date.parse(twoWeeksFromNow.toString());
-  const start = Date.parse(startDate)
-  const twoWeeksDifference = twoWeeksParsed - today
-  const difference = start - today;
-  if(difference >= twoWeeksDifference) {
-    console.log('it is at least two weeks till the deadline for acceptance')
-  } else {
-    alert('found an urgent claim');
-    setColor('danger')
-  }
-}
-
 const handleAccept = async (e: ButtonEvent): Promise<void> => {
   e.preventDefault();
   if(user) {
-      let result;
+      let result:boolean;
   const targetClaim = await getByID(id);
   switch(user.role) {
     case 'Supervisor':
       console.log(targetClaim);
        result = await supervisorUpdate(targetClaim);
-      (result) ? history.go(0) : console.log('something went wrong')
+      (result) ? alert('claim accepted') : alert('something went wrong');
+      history.go(0)
       break
     case 'Department Head':
       headUpdate(targetClaim);
        result = await headUpdate(targetClaim);
-      (result) ? history.go(0) : console.log('something went wrong')
+      (result) ? alert('claim accepted') : alert('something went wrong');
+      history.go(0)
       break
     case 'Benco':
+      targetClaim.projected = Number(amount);
         result = await bencoUpdate(targetClaim);
-      (result) ? history.go(0) : console.log('something went wrong')
+      (result) ? alert('claim accepted') : alert('something went wrong');
+      history.go(0)
       break
     case 'Employee':
       alert('you do not have access to this feature')
@@ -132,17 +123,18 @@ const handleReject = async (e: ButtonEvent): Promise<void> => {
   const targetClaim = await getByID(id);
     const result: boolean = await reject(targetClaim);
     (result) ? alert('successfully rejected reimbursement request') : alert('could not reject');
+    history.go(0)
   } 
 }
 
-  
+  if(user) {
 return (
         
     <>
     <UserNav />
-      <h1>Pending Approval</h1>
-      <FormButton onClick= {handleButtonClick}>View Final Grades</FormButton> 
-      <table>
+      <h1 className="text-center">Pending Approval</h1>
+      <GradeButton className="btn btn-info ml-2" onClick= {handleButtonClick}>View Final Grades</GradeButton> 
+      <table className="table table-striped table-sm table-bordered mt-4">
         <thead>
           <tr>
             <th>ID</th>
@@ -156,12 +148,12 @@ return (
             <th>Grade Format</th>
             <th>Projected Reimbursement</th>
             <th>Amount Awarded</th>
-            <th>Addition Notes</th>
+            <th>Additional Notes</th>
           </tr>
         </thead>
         {
          reimbursements.map((item, index) => (
-            <tr className= {`table-${color}`} key={index}>
+            <tr className= {(item.urgent) ? `table-danger` : 'table-default'} key={index}>
              <td>{item.id}</td>
              <td>{item.username}</td>
              <td>{item.start}</td>
@@ -180,12 +172,15 @@ return (
       </table>
       <Form>
         <FormLabel htmlFor='accept'>Please enter ID</FormLabel>
-          <FormInput type='text' required onChange={handleIDChange} />
-          <FormButton type='button' onClick= {handleAccept}>Accept</FormButton>
-          <FormButton type='button' onClick= {handleReject}>Reject</FormButton>
+        <FormInput type='text' required onChange={handleIDChange} />
+        <FormLabel htmlFor="alter amount">Alter Amount</FormLabel>
+        {(user.role === 'Benco')? (<FormInput type='text' onChange={handleAmountChange}/>) : (<FormInput type="text" value="cannot alter" />)}
+        <button type='button' className="btn btn-primary mb-2" onClick= {handleAccept}>Accept</button>
+        <button type='button' className="btn btn-danger" onClick= {handleReject}>Reject</button>
       </Form>
       <StyledLink to="/message/form">Request More Information</StyledLink>
     </>
       )
+  } else return (<Home />)
 }
 export default PendingPage;

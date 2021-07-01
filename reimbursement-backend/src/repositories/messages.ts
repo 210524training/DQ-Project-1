@@ -11,10 +11,10 @@ export class MessageRepository {
       TableName: 'message-table',
       Item: {
         recipient: message.recipient,
-        recipientRole: message.recipientRole,
+        'recipient role': message.recipientRole,
         note: message.note,
         sender: message.sender,
-        senderRole: message.senderRole,
+        'sender role': message.senderRole,
       },
       ReturnConsumedCapacity: 'TOTAL',
     };
@@ -65,9 +65,9 @@ export class MessageRepository {
       ProjectionExpression: '#r, #rr, #s, #sr, #n',
       ExpressionAttributeNames: {
         '#r': 'recipient',
-        '#rr': 'recipientRole',
+        '#rr': 'recipient role',
         '#s': 'sender',
-        '#sr': 'senderRole',
+        '#sr': 'sender role',
         '#n': 'note',
       },
       ExpressionAttributeValues: { ':rec': recipient },
@@ -77,10 +77,10 @@ export class MessageRepository {
     const data = await this.docClient.scan(params).promise();
 
     if(data.Items) {
-      log.info('something is working');
+      log.info('Get by recipient is working');
       return data.Items as Message[];
     }
-    log.debug('something is wrong');
+    log.debug('get by recipient is wrong');
     return [];
   }
 
@@ -91,9 +91,9 @@ export class MessageRepository {
       ProjectionExpression: '#r, #rr, #s, #sr, #n',
       ExpressionAttributeNames: {
         '#r': 'recipient',
-        '#rr': 'recipientRole',
+        '#rr': 'recipient role',
         '#s': 'sender',
-        '#sr': 'senderRole',
+        '#sr': 'sender role',
         '#n': 'note',
       },
       ExpressionAttributeValues: { ':ro': senderRole },
@@ -103,10 +103,10 @@ export class MessageRepository {
     const data = await this.docClient.scan(params).promise();
 
     if(data.Items) {
-      log.info('something is working');
+      log.info('Get by sender role is working');
       return data.Items as Message[];
     }
-    log.debug('something is wrong');
+    log.debug('get by sender role wrong');
     return [];
   }
 
@@ -117,9 +117,9 @@ export class MessageRepository {
       ProjectionExpression: '#r, #rr, #s, #sr, #n',
       ExpressionAttributeNames: {
         '#r': 'recipient',
-        '#rr': 'recipientRole',
+        '#rr': 'recipient role',
         '#s': 'sender',
-        '#sr': 'senderRole',
+        '#sr': 'sender role',
         '#n': 'note',
       },
       ExpressionAttributeValues: { ':rec': recipientRole },
@@ -129,10 +129,10 @@ export class MessageRepository {
     const data = await this.docClient.scan(params).promise();
 
     if(data.Items) {
-      log.info('something is working');
+      log.info('recipient role is working');
       return data.Items as Message[];
     }
-    log.debug('something is wrong');
+    log.debug('recipient role is wrong');
     return [];
   }
 }

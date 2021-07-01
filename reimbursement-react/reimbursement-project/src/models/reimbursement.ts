@@ -14,6 +14,8 @@ export default class Reimbursement {
       public projected: number = 0,
       public awarded: number = 0,
       public note: string,
+      public urgent: boolean,
+      public fileName?: string,
     ) {}
   }
   

@@ -22,6 +22,7 @@ export class ReimbursementRepository {
         projected: reimbursement.projected,
         awarded: reimbursement.awarded,
         note: reimbursement.note,
+        urgent: reimbursement.urgent,
       },
       ReturnConsumedCapacity: 'TOTAL',
     };
@@ -120,7 +121,7 @@ export class ReimbursementRepository {
     const params: DocumentClient.ScanInput = {
       TableName: 'rs-table',
 
-      ProjectionExpression: '#id, #u, #sd, #l, #fd, #t, #c, #s, #gf, #pr, #a, #n',
+      ProjectionExpression: '#id, #u, #sd, #l, #fd, #t, #c, #s, #gf, #pr, #a, #n, #ur',
       ExpressionAttributeNames: {
         '#id': 'id',
         '#u': 'username',
@@ -134,6 +135,7 @@ export class ReimbursementRepository {
         '#pr': 'projected',
         '#a': 'awarded',
         '#n': 'note',
+        '#ur': 'urgent',
       },
       ExpressionAttributeValues: { ':user': username },
       FilterExpression: '#u = :user',
@@ -427,6 +429,35 @@ export class ReimbursementRepository {
   }
 
   // add attachments?
+
+  async updateFile(reimbursement: Reimbursement): Promise<boolean> {
+    console.log('inside update file');
+    console.log(reimbursement.username, reimbursement.id);
+    const params: DocumentClient.UpdateItemInput = {
+      TableName: 'rs-table',
+      Key: {
+        username: reimbursement.username,
+        id: reimbursement.id,
+      },
+      UpdateExpression: 'SET #fn = :f',
+      ExpressionAttributeValues: {
+        ':f': reimbursement.fileName,
+      },
+      ExpressionAttributeNames: {
+        '#fn': 'file name',
+      },
+      ReturnValues: 'UPDATED_NEW',
+    };
+    try {
+      const result = await this.docClient.update(params).promise();
+
+      log.info(result);
+      return true;
+    } catch(error) {
+      log.error(error);
+      return false;
+    }
+  }
 }
 const reimbursementRepository = new ReimbursementRepository();
 export default reimbursementRepository;

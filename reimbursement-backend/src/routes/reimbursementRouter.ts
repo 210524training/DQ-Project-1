@@ -100,6 +100,17 @@ async function supervisorUpdate(req: Request, res: Response): Promise<void> {
   }
 }
 
+async function updateFile(req: Request, res: Response): Promise<void> {
+  const reimbursement = req.body;
+
+  const result = await reimbursementService.updateFile(reimbursement);
+  if(!result) {
+    res.status(500);
+  } else {
+    res.status(202);
+  }
+}
+
 async function deleteClaim(req: Request, res: Response): Promise<void> {
   const { id, username } = req.params;
 
@@ -304,6 +315,7 @@ reimbursementRouter.put('/reject', rejectReimbursement);
 reimbursementRouter.put('/accept/benco', bencoUpdate);
 reimbursementRouter.put('/accept/supervisor', supervisorUpdate);
 reimbursementRouter.put('/accept/head', headUpdate);
+reimbursementRouter.put('/update/file', updateFile);
 
 reimbursementRouter.delete('/delete/:id/:username', deleteClaim);
 

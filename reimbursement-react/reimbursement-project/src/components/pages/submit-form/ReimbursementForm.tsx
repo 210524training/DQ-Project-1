@@ -23,7 +23,7 @@ const ReimbursementForm = () => {
   const [type, setType] = useState<string>('');
   const [cost, setCost] = useState<string>('0');
   const [format, setFormat] = useState<string>('');
-  const [color, setColor] = useState<string>('');
+  const [urgent, setUrgent] = useState<boolean>(false);
   const [projection, setProjection] = useState<number>(0);
   const [note, setNote] = useState<string>('');
   const dispatch = useAppDispatch();
@@ -44,17 +44,6 @@ const ReimbursementForm = () => {
   } else {console.log('not a week from today');
      return false;
   }
-}
-
-function markUrgent() {
-  let today = Date.parse(file);
-  let stringToDate = new Date(file)
-  let twoWeeksFromNow = new Date(stringToDate.getFullYear(), stringToDate.getMonth(), stringToDate.getDate() + 14);
-  let twoWeeksParsed = Date.parse(twoWeeksFromNow.toString());
-  if ((twoWeeksParsed - today) >= 1209600000) {
-    console.log()
-    return false
-  } else return true;
 }
 
 const handleUsernameChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -103,42 +92,21 @@ function capProjection(num: number) {
 return cap
 }
 
-// function projectedAmount(cost: string, type: string) {
-//   let result: number;
-//   let cappedResult: number;
-//   switch (type) {
-//   case 'University Course':
-//     result = percentage(Number(cost), 80);
-//     cappedResult = capProjection(result);
-//     setProjection(cappedResult);
-//     break;
-//   case 'Seminar':
-//     result = percentage(Number(cost), 60);
-//     cappedResult = capProjection(result);
-//     setProjection(cappedResult);
-//     break;
-//   case 'Certification Preparation Class':
-//     result = percentage(Number(cost), 75);
-//     cappedResult = capProjection(result);
-//     setProjection(cappedResult);
-//     break;
-//   case 'Certification':
-//     result = percentage(Number(cost), 80);
-//     cappedResult = capProjection(result);
-//     setProjection(cappedResult);
-//     break;
-//   case 'Technical Training':
-//     result = percentage(Number(cost), 90);
-//     cappedResult = capProjection(result);
-//     setProjection(cappedResult);
-//     break;
-//   case 'Other':
-//     result = percentage(Number(cost), 30);
-//     cappedResult = capProjection(result);
-//     setProjection(cappedResult);
-//     break;
-//   }
-//  }
+function markUrgent(fileDate: string, startDate: string) {
+  let today = Date.parse(fileDate);
+  let stringToDate = new Date(fileDate)
+  let twoWeeksFromNow = new Date(stringToDate.getFullYear(), stringToDate.getMonth(), stringToDate.getDate() + 14);
+  let twoWeeksParsed = Date.parse(twoWeeksFromNow.toString());
+  const start = Date.parse(startDate)
+  const twoWeeksDifference = twoWeeksParsed - today
+  const difference = start - today;
+  if(difference >= twoWeeksDifference) {
+    console.log('it is at least two weeks till the deadline for acceptance')
+    setUrgent(false);
+  } else {
+    setUrgent(true);
+  }
+}
 
  useEffect(() => {
   function projectedAmount(cost: string, type: string) {
@@ -189,6 +157,8 @@ return cap
   
   if(user) {const handleFormSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    markUrgent(file, start);
     
     if (weekFromNow()) {
       //award available
@@ -198,7 +168,7 @@ return cap
         alert('you have reached your max benefit amount');
         history.push('/');
       } else {
-        const newReimbursement = new Reimbursement(uuidv4(), user.username, start, location, file, type, cost, 'Pending Supervisor', format, projection, 0, note);
+        const newReimbursement = new Reimbursement(uuidv4(), user.username, start, location, file, type, cost, 'Pending Supervisor', format, projection, 0, note, urgent);
         console.log(newReimbursement);
         addReimbursement(newReimbursement);
         alert('reimbursement application submitted');
